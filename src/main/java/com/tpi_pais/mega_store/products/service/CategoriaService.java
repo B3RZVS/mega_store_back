@@ -1,9 +1,9 @@
-package com.tpi_pais.mega_store.service;
+package com.tpi_pais.mega_store.products.service;
 
-import com.tpi_pais.mega_store.dto.CategoriaDTO;
-import com.tpi_pais.mega_store.mapper.CategoriaMapper;
-import com.tpi_pais.mega_store.model.Categoria;
-import com.tpi_pais.mega_store.repository.CategoriaRepository;
+import com.tpi_pais.mega_store.products.dto.CategoriaDTO;
+import com.tpi_pais.mega_store.products.mapper.CategoriaMapper;
+import com.tpi_pais.mega_store.products.model.Categoria;
+import com.tpi_pais.mega_store.products.repository.CategoriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,9 +25,15 @@ public class CategoriaService implements ICategoriaService {
 
     @Override
     public Categoria buscarPorId(Integer id) {
-
         return modelRepository.findById(id).orElse(null);
     }
+
+    @Override
+    public Categoria buscarPorNombre(String nombre) {
+        return modelRepository.findByNombre(nombre).orElse(null);
+    }
+
+
 
     @Override
     public CategoriaDTO guardar(CategoriaDTO modelDTO) {

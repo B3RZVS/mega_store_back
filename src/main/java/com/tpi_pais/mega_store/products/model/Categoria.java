@@ -1,4 +1,4 @@
-package com.tpi_pais.mega_store.model;
+package com.tpi_pais.mega_store.products.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.ToString;
@@ -38,5 +39,7 @@ public class Categoria {
     public void recuperar() {
         this.fechaEliminacion = null;
     }
+
+    public boolean esEliminado() { return this.fechaEliminacion != null; }
 
 }

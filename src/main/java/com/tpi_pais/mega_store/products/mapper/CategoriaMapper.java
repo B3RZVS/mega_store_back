@@ -1,7 +1,7 @@
-package com.tpi_pais.mega_store.mapper;
+package com.tpi_pais.mega_store.products.mapper;
 
-import com.tpi_pais.mega_store.dto.CategoriaDTO;
-import com.tpi_pais.mega_store.model.Categoria;
+import com.tpi_pais.mega_store.products.dto.CategoriaDTO;
+import com.tpi_pais.mega_store.products.model.Categoria;
 
 public class CategoriaMapper {
     public static CategoriaDTO toDTO(Categoria model) {

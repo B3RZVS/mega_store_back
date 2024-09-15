@@ -1,7 +1,7 @@
-package com.tpi_pais.mega_store.service;
+package com.tpi_pais.mega_store.products.service;
 
-import com.tpi_pais.mega_store.dto.CategoriaDTO;
-import com.tpi_pais.mega_store.model.Categoria;
+import com.tpi_pais.mega_store.products.dto.CategoriaDTO;
+import com.tpi_pais.mega_store.products.model.Categoria;
 
 import java.util.List;
 
@@ -9,6 +9,8 @@ public interface ICategoriaService {
     public List<CategoriaDTO> listar();
 
     public Categoria buscarPorId(Integer id);
+
+    public Categoria buscarPorNombre (String nombre);
 
     public CategoriaDTO guardar(CategoriaDTO model);
 
