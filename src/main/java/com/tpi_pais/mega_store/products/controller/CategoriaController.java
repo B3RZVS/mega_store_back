@@ -2,7 +2,6 @@ package com.tpi_pais.mega_store.products.controller;
 
 import com.tpi_pais.mega_store.products.dto.CategoriaDTO;
 import com.tpi_pais.mega_store.products.mapper.CategoriaMapper;
-import com.tpi_pais.mega_store.exception.RecursoNoEncontradoExcepcion;
 import com.tpi_pais.mega_store.products.model.Categoria;
 import com.tpi_pais.mega_store.products.service.ICategoriaService;
 import com.tpi_pais.mega_store.utils.ApiResponse;
@@ -15,8 +14,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import java.util.List;
 
 @RestController
-@RequestMapping("mega_store/backend")
-@CrossOrigin(value="http://localhost:8080/")
+@RequestMapping("products")
+@CrossOrigin(value="*")
 public class CategoriaController {
     @Autowired
     private ICategoriaService modelService;
@@ -46,10 +45,10 @@ public class CategoriaController {
 
             if (model == null) {
                 ApiResponse<Object> response = new ApiResponse<>(
-                        400,
-                        "Error: No se encontró la categoría con el ID.",
+                        404,
+                        "Error: Not Found",
                         null,
-                        "El ID debe corresponder a un objeto de tipo Categoria."
+                        "No se encontró la categoría con el ID."
                 );
                 return ResponseEntity.badRequest().body(response);
             }
@@ -57,7 +56,7 @@ public class CategoriaController {
             if (model.esEliminado()) {
                 ApiResponse<Object> response = new ApiResponse<>(
                         400,
-                        "Error: No se puede mostrar debido a que el recurso se encuentra eliminado.",
+                        "Error: Bad Request.",
                         null,
                         "No se puede traer un objeto que este eliminado."
                 );
@@ -67,7 +66,7 @@ public class CategoriaController {
             CategoriaDTO modelDTO = CategoriaMapper.toDTO(model);
             ApiResponse<Object> response = new ApiResponse<>(
                     200,
-                    "Solicitud Exitosa",
+                    "OK",
                     modelDTO,
                     null
             );
@@ -108,9 +107,9 @@ public class CategoriaController {
             if (model.noTieneNombre()) {
                 ApiResponse<Object> response = new ApiResponse<>(
                         400,
-                        "Error: No se envio un nombre.",
+                        "Error: Bad Request.",
                         null,
-                        "La categoria debe tener un nombre."
+                        "No se envio un nombre para la categoria."
                 );
                 return ResponseEntity.badRequest().body(response);
             };
@@ -119,7 +118,7 @@ public class CategoriaController {
             if (!expReg.verificarTextoConEspacios(model.getNombre())){
                 ApiResponse<Object> response = new ApiResponse<>(
                         400,
-                        "Error: El nombre no tiene el formato correspondiente.",
+                        "Error: Bad Request.",
                         null,
                         "El nombre debe estar formado unicamente por letras."
                 );
@@ -130,16 +129,16 @@ public class CategoriaController {
             if (aux != null){
                 ApiResponse<Object> response = new ApiResponse<>(
                         400,
-                        "Error: Ya existe una categoria con este nombre.",
+                        "Error: Bad Request.",
                         null,
-                        "No pueden haber 2 categorias con el mismo nombre."
+                        "Ya existe una categoria con este nombre, no pueden haber 2 categorias con el mismo nombre."
                 );
                 return ResponseEntity.badRequest().body(response);
             }
             CategoriaDTO modelGuardado = modelService.guardar(model);
             ApiResponse<Object> response = new ApiResponse<>(
-                    200,
-                    "Solicitud Exitosa.",
+                    201,
+                    "Created.",
                     modelGuardado,
                     null
             );
@@ -183,19 +182,19 @@ public class CategoriaController {
             Categoria categoriaModificar = modelService.buscarPorId(model.getId());
             if (categoriaModificar == null){
                 ApiResponse<Object> response = new ApiResponse<>(
-                        400,
-                        "Error: El id no corresponde a ninguna categoria.",
+                        404,
+                        "Error: Not Found.",
                         null,
-                        "Se debe enviar el id de una categoria existente."
+                        "El id no corresponde a ninguna categoria, se debe enviar el id de una categoria existente."
                 );
                 return ResponseEntity.badRequest().body(response);
             } else {
                 if (categoriaModificar.esEliminado()){
                     ApiResponse<Object> response = new ApiResponse<>(
                             400,
-                            "Error: La categoria no se puede modificar debido a que se encuentra elimianda.",
+                            "Error: Bad Request.",
                             null,
-                            "Solo se pueden modificar categorias que no esten eliminadas."
+                            "La categoria no se puede modificar debido a que se encuentra eliminada."
                     );
                     return ResponseEntity.badRequest().body(response);
                 }
@@ -204,7 +203,7 @@ public class CategoriaController {
             if (model.noTieneNombre()) {
                 ApiResponse<Object> response = new ApiResponse<>(
                         400,
-                        "Error: No se envio un nombre.",
+                        "Error: Bad Request.",
                         null,
                         "La categoria debe tener un nombre."
                 );
@@ -215,7 +214,7 @@ public class CategoriaController {
             if (!expReg.verificarTextoConEspacios(model.getNombre())){
                 ApiResponse<Object> response = new ApiResponse<>(
                         400,
-                        "Error: El nombre no tiene el formato correspondiente.",
+                        "Error: Bad Request.",
                         null,
                         "El nombre debe estar formado unicamente por letras."
                 );
@@ -226,16 +225,16 @@ public class CategoriaController {
             if (aux != null){
                 ApiResponse<Object> response = new ApiResponse<>(
                         400,
-                        "Error: Ya existe una categoria con este nombre.",
+                        "Error: Bad Request.",
                         null,
-                        "No pueden haber 2 categorias con el mismo nombre."
+                        "Ya existe una categoria con este nombre, no pueden haber 2 categorias con el mismo nombre."
                 );
                 return ResponseEntity.badRequest().body(response);
             }
             CategoriaDTO modelGuardado = modelService.guardar(model);
             ApiResponse<Object> response = new ApiResponse<>(
-                    200,
-                    "Solicitud Exitosa.",
+                    201,
+                    "Created.",
                     modelGuardado,
                     null
             );
@@ -271,19 +270,19 @@ public class CategoriaController {
             Categoria model = modelService.buscarPorId(id);
             if (model == null) {
                 ApiResponse<Object> response = new ApiResponse<>(
-                        400,
-                        "Error: El id no corresponde a ninguna categoria.",
+                        404,
+                        "Error: Not Found.",
                         null,
-                        "Se debe enviar el id de una categoria existente."
+                        "El id no corresponde a ninguna categoria, se debe enviar el id de una categoria existente."
                 );
                 return ResponseEntity.badRequest().body(response);
             }
             if (model.getFechaEliminacion() != null) {
                 ApiResponse<Object> response = new ApiResponse<>(
                         400,
-                        "Error: La categoria ya se encuentra eliminada.",
+                        "Error: Bad Request.",
                         null,
-                        "Se debe enviar el id de una categoria no eliminada."
+                        "La categoria ya se encuentra eliminada, se debe enviar el id de una categoria no eliminada."
                 );
                 return ResponseEntity.badRequest().body(response);
             }
@@ -291,7 +290,7 @@ public class CategoriaController {
             modelService.eliminar(model);
             ApiResponse<Object> response = new ApiResponse<>(
                     200,
-                    "Solicitud Exitosa.",
+                    "OK.",
                     model,
                     null
             );
@@ -326,19 +325,19 @@ public class CategoriaController {
             Categoria model = modelService.buscarPorId(id);
             if (model == null) {
                 ApiResponse<Object> response = new ApiResponse<>(
-                        400,
-                        "Error: El id no corresponde a ninguna categoria.",
+                        404,
+                        "Error: Not Found.",
                         null,
-                        "Se debe enviar el id de una categoria existente."
+                        "El id no corresponde a ninguna categoria, se debe enviar el id de una categoria existente.."
                 );
                 return ResponseEntity.badRequest().body(response);
             }
             if (model.getFechaEliminacion() == null) {
                 ApiResponse<Object> response = new ApiResponse<>(
                         400,
-                        "Error: La categoria ya no se encuentra eliminada.",
+                        "Error: Bad Request.",
                         null,
-                        "Se debe enviar el id de una categoria eliminada."
+                        "La categoria ya no se encuentra eliminada, se debe enviar el id de una categoria eliminada."
                 );
                 return ResponseEntity.badRequest().body(response);
             }
@@ -346,7 +345,7 @@ public class CategoriaController {
             modelService.recuperar(model);
             ApiResponse<Object> response = new ApiResponse<>(
                     200,
-                    "Solicitud Exitosa.",
+                    "OK.",
                     model,
                     null
             );
