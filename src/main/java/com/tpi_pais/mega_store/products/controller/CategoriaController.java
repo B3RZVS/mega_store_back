@@ -21,8 +21,14 @@ public class CategoriaController {
     private ICategoriaService modelService;
 
     @GetMapping({"/categorias"})
-    public List<CategoriaDTO> getAll() {
-        return modelService.listar();
+    public ResponseEntity<?> getAll() {
+        ApiResponse<Object> response = new ApiResponse<>(
+                200,
+                "OK",
+                modelService.listar(),
+                null
+        );
+        return ResponseEntity.ok().body(response);
     }
 
     @GetMapping("/categoria/{id}")
