@@ -12,17 +12,18 @@ import lombok.Data;
 import lombok.ToString;
 import java.time.LocalDateTime;
 
+
 @Entity
 @Table(name = "categorias")
 @Data
 @ToString
-public class Categoria {
+public class Color {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Size(min = 1, max = 100, message = "El nombre de la categoria debe tener menos de 100 caracteres")
+    @Size(min = 1, max = 100, message = "El nombre del color debe tener menos de 100 caracteres")
     @NotNull
     @Column(name = "nombre")
     private String nombre;
