@@ -11,11 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import java.util.List;
 
 @RestController
-@RequestMapping("products")
-@CrossOrigin(value="*")
+@RequestMapping("/products")
 public class CategoriaController {
     @Autowired
     private ICategoriaService modelService;
@@ -122,13 +120,16 @@ public class CategoriaController {
             ExpresionesRegulares expReg = new ExpresionesRegulares();
 
             if (!expReg.verificarTextoConEspacios(model.getNombre())){
-                ApiResponse<Object> response = new ApiResponse<>(
-                        400,
-                        "Error: Bad Request.",
-                        null,
-                        "El nombre debe estar formado unicamente por letras."
-                );
-                return ResponseEntity.badRequest().body(response);
+                model.setNombre(expReg.corregirCadena(model.getNombre()));
+                if (model.getNombre() == ""){
+                    ApiResponse<Object> response = new ApiResponse<>(
+                            400,
+                            "Error: Bad Request.",
+                            null,
+                            "El nombre debe estar formado unicamente por letras."
+                    );
+                    return ResponseEntity.badRequest().body(response);
+                }
             }
             model.capitalizarNombre();
             Categoria aux = modelService.buscarPorNombre(model.getNombre());
@@ -137,7 +138,7 @@ public class CategoriaController {
                         400,
                         "Error: Bad Request.",
                         null,
-                        "Ya existe una categoria con este nombre, no pueden haber 2 categorias con el mismo nombre."
+                        "Ya existe una categoria con este nombre."
                 );
                 return ResponseEntity.badRequest().body(response);
             }
@@ -183,7 +184,7 @@ public class CategoriaController {
         * 6) Que el nuevo nombre no este registrado en otro objeto Categoria
         *   En caso que falle se retorna una badrequest
         * */
-        //return modelService.guardar(model);
+
         try{
             Categoria categoriaModificar = modelService.buscarPorId(model.getId());
             if (categoriaModificar == null){
@@ -271,6 +272,11 @@ public class CategoriaController {
          * 4) Que la categoria encontrada no este eliminada.
          *   Si se encuentra la categoria, y la misma esta elimianda se retorna un badrequest.
          * En caso de que pase todas las verificacioens se cambia el la fechaEliminacion por el valor actual de tiempo.
+         * Validaciones Futuras:
+         * 1) Que la categoria que no tenga asociado ningun producto para poder eliminarlo.
+         * 2) Fixear, la exp reg debe recibir cualquier caracter no solo letras
+         * 3) Ademas si la exp falla debe poder resolverlo, por ejemplo si hay espacios
+         * demas los debe quitar. 
          * */
         try {
             Categoria model = modelService.buscarPorId(id);

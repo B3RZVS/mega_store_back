@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestController
-@RequestMapping("products")
-@CrossOrigin(value="*")
+@RequestMapping("/products")
 public class ColorController {
     @Autowired
     private IColorService modelService;
