@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 
 
 @Entity
-@Table(name = "categorias")
+@Table(name = "colores")
 @Data
 @ToString
 public class Color {
