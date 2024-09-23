@@ -54,6 +54,8 @@ public class DeleteCategoriaController {
                 );
                 return ResponseEntity.badRequest().body(response);
             }
+            //Queda pendiente la validacion de si esta asociada algun producto no se puede eliminar
+
             model.eliminar();
             modelService.eliminar(model);
             ApiResponse<Object> response = new ApiResponse<>(

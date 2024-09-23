@@ -62,23 +62,34 @@ public class PostCategoriaController {
             model.capitalizarNombre();
             Categoria aux = modelService.buscarPorNombre(model.getNombre());
             if (aux != null){
+                if (aux.esEliminado()){
+                    aux.recuperar();
+                    ApiResponse<Object> response = new ApiResponse<>(
+                            201,
+                            "Created.",
+                            aux,
+                            null
+                    );
+                    return ResponseEntity.ok().body(response);
+                } else {
+                    ApiResponse<Object> response = new ApiResponse<>(
+                            400,
+                            "Error: Bad Request.",
+                            null,
+                            "Ya existe una categoria con este nombre."
+                    );
+                    return ResponseEntity.badRequest().body(response);
+                }
+            } else {
+                CategoriaDTO modelGuardado = modelService.guardar(model);
                 ApiResponse<Object> response = new ApiResponse<>(
-                        400,
-                        "Error: Bad Request.",
-                        null,
-                        "Ya existe una categoria con este nombre."
+                        201,
+                        "Created.",
+                        modelGuardado,
+                        null
                 );
-                return ResponseEntity.badRequest().body(response);
+                return ResponseEntity.ok().body(response);
             }
-            CategoriaDTO modelGuardado = modelService.guardar(model);
-            ApiResponse<Object> response = new ApiResponse<>(
-                    201,
-                    "Created.",
-                    modelGuardado,
-                    null
-            );
-            return ResponseEntity.ok().body(response);
-
         } catch (Exception e){
             ApiResponse<Object> response = new ApiResponse<>(
                     400,
@@ -88,7 +99,6 @@ public class PostCategoriaController {
             );
             return ResponseEntity.badRequest().body(response);
         }
-
     }
     // Manejador de excepciones para cuando el parámetro no es del tipo esperado (ej. no es un entero)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
@@ -101,7 +111,6 @@ public class PostCategoriaController {
                 null,
                 error
         );
-
         return ResponseEntity.badRequest().body(response);
     }
 }
