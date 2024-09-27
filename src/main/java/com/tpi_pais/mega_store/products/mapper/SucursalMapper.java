@@ -1,19 +1,19 @@
 package com.tpi_pais.mega_store.products.mapper;
 
-import com.tpi_pais.mega_store.products.dto.CategoriaDTO;
-import com.tpi_pais.mega_store.products.model.Categoria;
+import com.tpi_pais.mega_store.products.dto.SucursalDTO;
+import com.tpi_pais.mega_store.products.model.Sucursal;
 
-public class CategoriaMapper {
-    public static CategoriaDTO toDTO(Categoria model) {
-        CategoriaDTO dto = new CategoriaDTO();
+public class SucursalMapper {
+    public static SucursalDTO toDTO(Sucursal model) {
+        SucursalDTO dto = new SucursalDTO();
         dto.setId(model.getId());
         dto.setNombre(model.getNombre());
         dto.setFechaEliminacion(model.getFechaEliminacion());
         return dto;
     }
 
-    public static Categoria toEntity(CategoriaDTO dto) {
-        Categoria model = new Categoria();
+    public static Sucursal toEntity(SucursalDTO dto) {
+        Sucursal model = new Sucursal();
         model.setId(dto.getId());
         model.setNombre(dto.getNombre());
         model.setFechaEliminacion(dto.getFechaEliminacion());
