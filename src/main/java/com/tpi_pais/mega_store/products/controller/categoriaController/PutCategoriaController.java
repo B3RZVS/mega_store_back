@@ -69,7 +69,15 @@ public class PutCategoriaController {
                 return ResponseEntity.badRequest().body(response);
             };
             ExpresionesRegulares expReg = new ExpresionesRegulares();
-
+            if (!expReg.verificarCaracteres(model.getNombre())){
+                ApiResponse<Object> response = new ApiResponse<>(
+                        400,
+                        "Error: Bad Request.",
+                        null,
+                        "El nombre debe estar formado únicamente por letras y números."
+                );
+                return ResponseEntity.badRequest().body(response);
+            }
             if (!expReg.verificarTextoConEspacios(model.getNombre())){
                 model.setNombre(expReg.corregirCadena(model.getNombre()));
                 if (model.getNombre() == ""){
@@ -77,7 +85,7 @@ public class PutCategoriaController {
                             400,
                             "Error: Bad Request.",
                             null,
-                            "El nombre debe estar formado unicamente por letras."
+                            "El nombre debe estar formado unicamente por letras y numeros."
                     );
                     return ResponseEntity.badRequest().body(response);
                 }

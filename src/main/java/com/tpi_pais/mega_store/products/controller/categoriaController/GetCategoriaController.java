@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
+import java.util.List;
+
 @RestController
 @RequestMapping("/products")
 public class GetCategoriaController {
@@ -15,13 +18,25 @@ public class GetCategoriaController {
     private ICategoriaService modelService;
     @GetMapping({"/categorias"})
     public ResponseEntity<?> getAll() {
-        ApiResponse<Object> response = new ApiResponse<>(
-                200,
-                "OK",
-                modelService.listar(),
-                null
-        );
-        return ResponseEntity.ok().body(response);
+        List<CategoriaDTO> categorias = modelService.listar();
+        if (categorias.isEmpty()) {
+            ApiResponse<Object> response = new ApiResponse<>(
+                    400,
+                    "Bad request",
+                    null,
+                    "No hay categorías creadas."
+            );
+            return ResponseEntity.badRequest().body(response);
+        }else {
+            ApiResponse<Object> response = new ApiResponse<>(
+                    200,
+                    "OK",
+                    categorias,
+                    null
+            );
+            return ResponseEntity.ok().body(response);
+        }
+
     }
 
     @GetMapping("/categoria/{id}")

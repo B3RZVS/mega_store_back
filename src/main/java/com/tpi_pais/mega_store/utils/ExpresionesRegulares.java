@@ -11,6 +11,7 @@ public class ExpresionesRegulares {
     private static final Pattern PATRON_TEXTO = Pattern.compile("^[A-Za-z]+$");
     private static final Pattern PATRON_TEXTO_ALFANUMERICO = Pattern.compile("^[A-Za-z0-9]+$");
     private static final Pattern PATRON_TEXTO_CON_ESPACIOS = Pattern.compile("^[A-Za-z0-9áéíóúÁÉÍÓÚÁÉÍÓÚ]+([\\s\\-_.A-Za-z0-9áéíóúÁÉÍÓÚÁÉÍÓÚ]+)*$");
+    private static final Pattern PATRON_CARACTERES_PERMITIDOS = Pattern.compile("^[A-Za-z0-9áéíóúÁÉÍÓÚÁÉÍÓÚ\\s]+$");
 
 
 
@@ -23,7 +24,18 @@ public class ExpresionesRegulares {
         return PATRON_TEXTO.matcher(cadena).matches();
     }
 
+    public boolean verificarCaracteres(String cadena) {
+        return PATRON_CARACTERES_PERMITIDOS.matcher(cadena).matches();
+    }
+    public static String limpiarEspacios(String cadena) {
+        // Eliminar los espacios al principio y al final
+        String cadenaLimpia = cadena.trim();
 
+        // Reemplazar múltiples espacios entre palabras con un solo espacio
+        cadenaLimpia = cadenaLimpia.replaceAll("\\s+", " ");
+
+        return cadenaLimpia;
+    }
     public String corregirCadena(String cadena) {
         Pattern pattern = Pattern.compile(String.valueOf(PATRON_TEXTO_CON_ESPACIOS));
         Matcher matcher = pattern.matcher(cadena);
@@ -32,6 +44,8 @@ public class ExpresionesRegulares {
         if (matcher.matches()) {
             return cadena;
         }
+
+        cadena = limpiarEspacios(cadena);
 
         // Eliminamos los caracteres no válidos
         StringBuilder cadenaCorregida = new StringBuilder();

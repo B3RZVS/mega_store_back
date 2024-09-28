@@ -46,7 +46,15 @@ public class PostCategoriaController {
                 return ResponseEntity.badRequest().body(response);
             };
             ExpresionesRegulares expReg = new ExpresionesRegulares();
-
+            if (!expReg.verificarCaracteres(model.getNombre())){
+                ApiResponse<Object> response = new ApiResponse<>(
+                        400,
+                        "Error: Bad Request.",
+                        null,
+                        "El nombre debe estar formado únicamente por letras y números."
+                );
+                return ResponseEntity.badRequest().body(response);
+            }
             if (!expReg.verificarTextoConEspacios(model.getNombre())){
                 model.setNombre(expReg.corregirCadena(model.getNombre()));
                 if (model.getNombre() == ""){
@@ -54,7 +62,7 @@ public class PostCategoriaController {
                             400,
                             "Error: Bad Request.",
                             null,
-                            "El nombre debe estar formado unicamente por letras."
+                            "El nombre debe estar formado unicamente por letras y numeros."
                     );
                     return ResponseEntity.badRequest().body(response);
                 }
@@ -63,7 +71,7 @@ public class PostCategoriaController {
             Categoria aux = modelService.buscarPorNombre(model.getNombre());
             if (aux != null){
                 if (aux.esEliminado()){
-                    aux.recuperar();
+                    modelService.recuperar(aux);
                     ApiResponse<Object> response = new ApiResponse<>(
                             201,
                             "Created.",
@@ -104,7 +112,7 @@ public class PostCategoriaController {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<?> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
         // Creamos una respuesta en formato JSON con el error
-        String error = String.format("El parámetro '%s' debe ser un número entero válido.", ex.getName());
+        String error = String.format("El parámetro '%s' debe ser un DTO de Categoria valido.", ex.getName());
         ApiResponse<Object> response = new ApiResponse<>(
                 200,
                 "Error de tipo de argumento",
