@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface TalleRepository extends JpaRepository<Talle,Integer> {
 
-    List<Talle> findByFechaEliminacionIsNull();
+    List<Talle> findByFechaEliminacionIsNullOrderByIdAsc();
 
     Optional<Talle> findByNombre(String nombre);
 }

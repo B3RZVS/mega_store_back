@@ -18,7 +18,7 @@ public class CategoriaService implements ICategoriaService {
 
     @Override
     public List<CategoriaDTO> listar() {
-        List<Categoria> categorias = modelRepository.findByFechaEliminacionIsNull();
+        List<Categoria> categorias = modelRepository.findByFechaEliminacionIsNullOrderByIdAsc();
         return categorias.stream().map(CategoriaMapper::toDTO).toList();
     }
 

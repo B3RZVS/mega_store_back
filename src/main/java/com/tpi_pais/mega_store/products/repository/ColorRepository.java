@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface ColorRepository extends JpaRepository<Color,Integer>{
 
-    List<Color> findByFechaEliminacionIsNull();
+    List<Color> findByFechaEliminacionIsNullOrderByIdAsc();
 
     Optional<Color> findByNombre(String nombre);
 }

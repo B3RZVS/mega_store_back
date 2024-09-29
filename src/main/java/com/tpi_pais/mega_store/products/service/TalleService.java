@@ -17,7 +17,7 @@ public class TalleService implements ITalleService {
 
     @Override
     public List<TalleDTO> listar() {
-        List<Talle> talles = modelRepository.findByFechaEliminacionIsNull();
+        List<Talle> talles = modelRepository.findByFechaEliminacionIsNullOrderByIdAsc();
         return talles.stream().map(TalleMapper::toDTO).toList();
     }
 

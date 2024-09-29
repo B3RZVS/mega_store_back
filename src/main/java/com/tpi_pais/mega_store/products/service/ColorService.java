@@ -21,7 +21,7 @@ public class ColorService implements IColorService{
 
     @Override
     public List<ColorDTO> listar() {
-        List<Color> colors = modelRepository.findByFechaEliminacionIsNull();
+        List<Color> colors = modelRepository.findByFechaEliminacionIsNullOrderByIdAsc();
         return colors.stream().map(ColorMapper::toDTO).toList();
     }
 

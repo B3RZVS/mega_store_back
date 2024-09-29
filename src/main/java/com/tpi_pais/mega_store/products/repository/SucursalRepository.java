@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface SucursalRepository extends JpaRepository <Sucursal,Integer> {
 
-    List<Sucursal> findByFechaEliminacionIsNull();
+    List<Sucursal> findByFechaEliminacionIsNullOrderByIdAsc();
 
     Optional<Sucursal> findByNombre(String nombre);
 }

@@ -17,7 +17,7 @@ public class MarcaService implements IMarcaService {
 
     @Override
     public List<MarcaDTO> listar() {
-        List<Marca> marcas = modelRepository.findByFechaEliminacionIsNull();
+        List<Marca> marcas = modelRepository.findByFechaEliminacionIsNullOrderByIdAsc();
         return marcas.stream().map(MarcaMapper::toDTO).toList();
     }
 

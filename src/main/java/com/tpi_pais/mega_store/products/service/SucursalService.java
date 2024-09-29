@@ -16,7 +16,7 @@ public class SucursalService implements ISucursalService {
 
     @Override
     public List<SucursalDTO> listar() {
-        List<Sucursal> Sucursals = modelRepository.findByFechaEliminacionIsNull();
+        List<Sucursal> Sucursals = modelRepository.findByFechaEliminacionIsNullOrderByIdAsc();
         return Sucursals.stream().map(SucursalMapper::toDTO).toList();
     }
 

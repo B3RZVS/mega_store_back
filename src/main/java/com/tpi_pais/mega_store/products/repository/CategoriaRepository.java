@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface CategoriaRepository extends JpaRepository  <Categoria,Integer>{
 
-    List<Categoria> findByFechaEliminacionIsNull();
+    List<Categoria> findByFechaEliminacionIsNullOrderByIdAsc();
 
     Optional<Categoria> findByNombre(String nombre);
 }
