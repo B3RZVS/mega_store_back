@@ -1,15 +1,17 @@
 package com.tpi_pais.mega_store.products.controller.sucursalController;
 
+import com.tpi_pais.mega_store.utils.ApiResponse;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import com.tpi_pais.mega_store.products.dto.SucursalDTO;
 import com.tpi_pais.mega_store.products.model.Sucursal;
 import com.tpi_pais.mega_store.products.service.ISucursalService;
-import com.tpi_pais.mega_store.utils.ApiResponse;
 import com.tpi_pais.mega_store.utils.ExpresionesRegulares;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/products")
 public class PostSucursalController {
@@ -29,8 +31,8 @@ public class PostSucursalController {
          *   - Debe estar formado solo por letras y/o espacios.
          *   - Puede contener espacios, pero solo entre las palabras, no al principio ni al final.
          *   - Puede contener 1 y solo 1 espacio entre 2 palabras.
-         * Una vez pasado esto se debe capitalizar el nombre para estandarizar todas las Sucursals.
-         * 4) Que no exista una Sucursal con el nombre.
+         * Una vez pasado esto se debe capitalizar el nombre para estandarizar todas las sucursals.
+         * 4) Que no exista una sucursal con el nombre.
          *
          * */
         try {
@@ -39,12 +41,20 @@ public class PostSucursalController {
                         400,
                         "Error: Bad Request.",
                         null,
-                        "No se envio un nombre para la Sucursal."
+                        "No se envio un nombre para la sucursal."
                 );
                 return ResponseEntity.badRequest().body(response);
             };
             ExpresionesRegulares expReg = new ExpresionesRegulares();
-
+            if (!expReg.verificarCaracteres(model.getNombre())){
+                ApiResponse<Object> response = new ApiResponse<>(
+                        400,
+                        "Error: Bad Request.",
+                        null,
+                        "El nombre debe estar formado únicamente por letras y números."
+                );
+                return ResponseEntity.badRequest().body(response);
+            }
             if (!expReg.verificarTextoConEspacios(model.getNombre())){
                 model.setNombre(expReg.corregirCadena(model.getNombre()));
                 if (model.getNombre() == ""){
@@ -52,7 +62,7 @@ public class PostSucursalController {
                             400,
                             "Error: Bad Request.",
                             null,
-                            "El nombre debe estar formado unicamente por letras."
+                            "El nombre debe estar formado unicamente por letras y numeros."
                     );
                     return ResponseEntity.badRequest().body(response);
                 }
@@ -61,7 +71,7 @@ public class PostSucursalController {
             Sucursal aux = modelService.buscarPorNombre(model.getNombre());
             if (aux != null){
                 if (aux.esEliminado()){
-                    aux.recuperar();
+                    modelService.recuperar(aux);
                     ApiResponse<Object> response = new ApiResponse<>(
                             201,
                             "Created.",
@@ -74,7 +84,7 @@ public class PostSucursalController {
                             400,
                             "Error: Bad Request.",
                             null,
-                            "Ya existe una Sucursal con este nombre."
+                            "Ya existe una sucursal con este nombre."
                     );
                     return ResponseEntity.badRequest().body(response);
                 }
@@ -102,9 +112,9 @@ public class PostSucursalController {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<?> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
         // Creamos una respuesta en formato JSON con el error
-        String error = String.format("El parámetro '%s' debe ser un número entero válido.", ex.getName());
+        String error = String.format("El parámetro '%s' debe ser un DTO de Sucursal valido.", ex.getName());
         ApiResponse<Object> response = new ApiResponse<>(
-                200,
+                400,
                 "Error de tipo de argumento",
                 null,
                 error
@@ -112,3 +122,4 @@ public class PostSucursalController {
         return ResponseEntity.badRequest().body(response);
     }
 }
+

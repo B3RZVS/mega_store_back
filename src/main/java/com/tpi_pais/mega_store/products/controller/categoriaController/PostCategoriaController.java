@@ -114,7 +114,7 @@ public class PostCategoriaController {
         // Creamos una respuesta en formato JSON con el error
         String error = String.format("El parámetro '%s' debe ser un DTO de Categoria valido.", ex.getName());
         ApiResponse<Object> response = new ApiResponse<>(
-                200,
+                400,
                 "Error de tipo de argumento",
                 null,
                 error

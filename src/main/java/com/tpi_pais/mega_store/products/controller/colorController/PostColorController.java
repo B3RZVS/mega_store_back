@@ -1,21 +1,24 @@
 package com.tpi_pais.mega_store.products.controller.colorController;
+
+import com.tpi_pais.mega_store.utils.ApiResponse;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import com.tpi_pais.mega_store.products.dto.ColorDTO;
 import com.tpi_pais.mega_store.products.model.Color;
 import com.tpi_pais.mega_store.products.service.IColorService;
-import com.tpi_pais.mega_store.utils.ApiResponse;
 import com.tpi_pais.mega_store.utils.ExpresionesRegulares;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/products")
 public class PostColorController {
     @Autowired
     private IColorService modelService;
 
-    @PostMapping("/Color")
+    @PostMapping("/color")
     public ResponseEntity<?> guardar(@RequestBody ColorDTO model){
         /*
          * Validaciones:
@@ -28,8 +31,8 @@ public class PostColorController {
          *   - Debe estar formado solo por letras y/o espacios.
          *   - Puede contener espacios, pero solo entre las palabras, no al principio ni al final.
          *   - Puede contener 1 y solo 1 espacio entre 2 palabras.
-         * Una vez pasado esto se debe capitalizar el nombre para estandarizar todas las Colors.
-         * 4) Que no exista una Color con el nombre.
+         * Una vez pasado esto se debe capitalizar el nombre para estandarizar todas las colors.
+         * 4) Que no exista una color con el nombre.
          *
          * */
         try {
@@ -38,12 +41,20 @@ public class PostColorController {
                         400,
                         "Error: Bad Request.",
                         null,
-                        "No se envio un nombre para la Color."
+                        "No se envio un nombre para la color."
                 );
                 return ResponseEntity.badRequest().body(response);
             };
             ExpresionesRegulares expReg = new ExpresionesRegulares();
-
+            if (!expReg.verificarCaracteres(model.getNombre())){
+                ApiResponse<Object> response = new ApiResponse<>(
+                        400,
+                        "Error: Bad Request.",
+                        null,
+                        "El nombre debe estar formado únicamente por letras y números."
+                );
+                return ResponseEntity.badRequest().body(response);
+            }
             if (!expReg.verificarTextoConEspacios(model.getNombre())){
                 model.setNombre(expReg.corregirCadena(model.getNombre()));
                 if (model.getNombre() == ""){
@@ -51,7 +62,7 @@ public class PostColorController {
                             400,
                             "Error: Bad Request.",
                             null,
-                            "El nombre debe estar formado unicamente por letras."
+                            "El nombre debe estar formado unicamente por letras y numeros."
                     );
                     return ResponseEntity.badRequest().body(response);
                 }
@@ -59,23 +70,34 @@ public class PostColorController {
             model.capitalizarNombre();
             Color aux = modelService.buscarPorNombre(model.getNombre());
             if (aux != null){
+                if (aux.esEliminado()){
+                    modelService.recuperar(aux);
+                    ApiResponse<Object> response = new ApiResponse<>(
+                            201,
+                            "Created.",
+                            aux,
+                            null
+                    );
+                    return ResponseEntity.ok().body(response);
+                } else {
+                    ApiResponse<Object> response = new ApiResponse<>(
+                            400,
+                            "Error: Bad Request.",
+                            null,
+                            "Ya existe una color con este nombre."
+                    );
+                    return ResponseEntity.badRequest().body(response);
+                }
+            } else {
+                ColorDTO modelGuardado = modelService.guardar(model);
                 ApiResponse<Object> response = new ApiResponse<>(
-                        400,
-                        "Error: Bad Request.",
-                        null,
-                        "Ya existe una Color con este nombre, no pueden haber 2 Colors con el mismo nombre."
+                        201,
+                        "Created.",
+                        modelGuardado,
+                        null
                 );
-                return ResponseEntity.badRequest().body(response);
+                return ResponseEntity.ok().body(response);
             }
-            ColorDTO modelGuardado = modelService.guardar(model);
-            ApiResponse<Object> response = new ApiResponse<>(
-                    201,
-                    "Created.",
-                    modelGuardado,
-                    null
-            );
-            return ResponseEntity.ok().body(response);
-
         } catch (Exception e){
             ApiResponse<Object> response = new ApiResponse<>(
                     400,
@@ -85,20 +107,18 @@ public class PostColorController {
             );
             return ResponseEntity.badRequest().body(response);
         }
-
     }
     // Manejador de excepciones para cuando el parámetro no es del tipo esperado (ej. no es un entero)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<?> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
         // Creamos una respuesta en formato JSON con el error
-        String error = String.format("El parámetro '%s' debe ser un número entero válido.", ex.getName());
+        String error = String.format("El parámetro '%s' debe ser un DTO de Color valido.", ex.getName());
         ApiResponse<Object> response = new ApiResponse<>(
-                200,
+                400,
                 "Error de tipo de argumento",
                 null,
                 error
         );
-
         return ResponseEntity.badRequest().body(response);
     }
 }

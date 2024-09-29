@@ -9,24 +9,37 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.List;
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/products")
 public class GetColorController {
     @Autowired
     private IColorService modelService;
-
-    @GetMapping({"/Colors"})
+    @GetMapping({"/colores"})
     public ResponseEntity<?> getAll() {
-        ApiResponse<Object> response = new ApiResponse<>(
-                200,
-                "OK",
-                modelService.listar(),
-                null
-        );
-        return ResponseEntity.ok().body(response);
+        List<ColorDTO> colors = modelService.listar();
+        if (colors.isEmpty()) {
+            ApiResponse<Object> response = new ApiResponse<>(
+                    400,
+                    "Bad request",
+                    null,
+                    "No hay categorías creadas."
+            );
+            return ResponseEntity.badRequest().body(response);
+        }else {
+            ApiResponse<Object> response = new ApiResponse<>(
+                    200,
+                    "OK",
+                    colors,
+                    null
+            );
+            return ResponseEntity.ok().body(response);
+        }
+
     }
 
-    @GetMapping("/Color/{id}")
+    @GetMapping("/color/{id}")
     public ResponseEntity<?> getPorId(@PathVariable Integer id){
         /*
          * Validaciones:
@@ -34,10 +47,10 @@ public class GetColorController {
          *   En caso que falle se ejecuta el @ExceptionHandler
          * 2) Que el id sea un entero.
          *   En caso que falle se ejecuta el @ExceptionHandler
-         * 3) Que exista una Color con dicho id.
+         * 3) Que exista una color con dicho id.
          *   Se realiza la busqueda del obj y si el mismo retorna null se devuelve el badrequest
-         * 4) Que la Color encontrada no este eliminada.
-         *   Si se encuentra la Color, y la misma esta elimianda se retorna un badrequest.
+         * 4) Que la color encontrada no este eliminada.
+         *   Si se encuentra la color, y la misma esta elimianda se retorna un badrequest.
          * En caso de que pase todas las verificacioens devuelve el recurso encontrado.
          * */
 
@@ -90,7 +103,7 @@ public class GetColorController {
         // Creamos una respuesta en formato JSON con el error
         String error = String.format("El parámetro '%s' debe ser un número entero válido.", ex.getName());
         ApiResponse<Object> response = new ApiResponse<>(
-                200,
+                400,
                 "Error de tipo de argumento",
                 null,
                 error

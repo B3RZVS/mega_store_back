@@ -1,5 +1,4 @@
 package com.tpi_pais.mega_store.products.controller.sucursalController;
-
 import com.tpi_pais.mega_store.products.dto.SucursalDTO;
 import com.tpi_pais.mega_store.products.mapper.SucursalMapper;
 import com.tpi_pais.mega_store.products.model.Sucursal;
@@ -10,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.List;
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/products")
 public class GetSucursalController {
@@ -17,13 +18,25 @@ public class GetSucursalController {
     private ISucursalService modelService;
     @GetMapping({"/sucursales"})
     public ResponseEntity<?> getAll() {
-        ApiResponse<Object> response = new ApiResponse<>(
-                200,
-                "OK",
-                modelService.listar(),
-                null
-        );
-        return ResponseEntity.ok().body(response);
+        List<SucursalDTO> sucursals = modelService.listar();
+        if (sucursals.isEmpty()) {
+            ApiResponse<Object> response = new ApiResponse<>(
+                    400,
+                    "Bad request",
+                    null,
+                    "No hay categorías creadas."
+            );
+            return ResponseEntity.badRequest().body(response);
+        }else {
+            ApiResponse<Object> response = new ApiResponse<>(
+                    200,
+                    "OK",
+                    sucursals,
+                    null
+            );
+            return ResponseEntity.ok().body(response);
+        }
+
     }
 
     @GetMapping("/sucursal/{id}")
@@ -34,10 +47,10 @@ public class GetSucursalController {
          *   En caso que falle se ejecuta el @ExceptionHandler
          * 2) Que el id sea un entero.
          *   En caso que falle se ejecuta el @ExceptionHandler
-         * 3) Que exista una Sucursal con dicho id.
+         * 3) Que exista una sucursal con dicho id.
          *   Se realiza la busqueda del obj y si el mismo retorna null se devuelve el badrequest
-         * 4) Que la Sucursal encontrada no este eliminada.
-         *   Si se encuentra la Sucursal, y la misma esta elimianda se retorna un badrequest.
+         * 4) Que la sucursal encontrada no este eliminada.
+         *   Si se encuentra la sucursal, y la misma esta elimianda se retorna un badrequest.
          * En caso de que pase todas las verificacioens devuelve el recurso encontrado.
          * */
 
@@ -90,7 +103,7 @@ public class GetSucursalController {
         // Creamos una respuesta en formato JSON con el error
         String error = String.format("El parámetro '%s' debe ser un número entero válido.", ex.getName());
         ApiResponse<Object> response = new ApiResponse<>(
-                200,
+                400,
                 "Error de tipo de argumento",
                 null,
                 error
@@ -98,5 +111,4 @@ public class GetSucursalController {
 
         return ResponseEntity.badRequest().body(response);
     }
-    
 }
