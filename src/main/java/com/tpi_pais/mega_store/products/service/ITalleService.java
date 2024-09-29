@@ -1,0 +1,22 @@
+package com.tpi_pais.mega_store.products.service;
+
+import com.tpi_pais.mega_store.products.dto.TalleDTO;
+import com.tpi_pais.mega_store.products.model.Talle;
+
+import java.util.List;
+
+public interface ITalleService {
+    public List<TalleDTO> listar();
+
+    public Talle buscarPorId(Integer id);
+
+    public Talle buscarPorNombre (String nombre);
+
+    public TalleDTO guardar(TalleDTO model);
+
+    public Talle guardar(Talle model);
+
+    public void eliminar(Talle model);
+
+    public void recuperar(Talle model);
+}
