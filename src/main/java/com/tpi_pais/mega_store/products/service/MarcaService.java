@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class MarcaService implements ICategoriaService {
+public class MarcaService implements IMarcaService {
 
     @Autowired
     private MarcaRepository modelRepository;

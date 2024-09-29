@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-RestController
+@RestController
 @RequestMapping("/products")
 public class PostMarcaController {
     @Autowired

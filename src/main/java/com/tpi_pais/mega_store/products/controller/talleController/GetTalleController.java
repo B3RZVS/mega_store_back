@@ -20,7 +20,7 @@ public class GetTalleController {
     @GetMapping({"/talles"})
     public ResponseEntity<?> getAll() {
         List<TalleDTO> talles = modelService.listar();
-        if (Talle.isEmpty()) {
+        if (talles.isEmpty()) {
             ApiResponse<Object> response = new ApiResponse<>(
                     400,
                     "Bad request",
