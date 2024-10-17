@@ -12,8 +12,11 @@ public class ExpresionesRegulares {
     private static final Pattern PATRON_TEXTO_ALFANUMERICO = Pattern.compile("^[A-Za-z0-9]+$");
     private static final Pattern PATRON_TEXTO_CON_ESPACIOS = Pattern.compile("^[A-Za-z0-9áéíóúÁÉÍÓÚÁÉÍÓÚ]+([\\s\\-_.A-Za-z0-9áéíóúÁÉÍÓÚÁÉÍÓÚ]+)*$");
     private static final Pattern PATRON_CARACTERES_PERMITIDOS = Pattern.compile("^[A-Za-z0-9áéíóúÁÉÍÓÚÁÉÍÓÚ\\s]+$");
+    private static final Pattern PATRON_EMAIL = Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
 
-
+    public boolean verificarEmail(String email) {
+        return PATRON_EMAIL.matcher(email).matches();
+    }
 
     public boolean verificarNumeros(String cadena) {
         return PATRON_NUMEROS.matcher(cadena).matches();
