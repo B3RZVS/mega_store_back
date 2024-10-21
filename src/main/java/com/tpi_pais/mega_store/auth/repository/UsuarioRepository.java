@@ -10,13 +10,13 @@ public interface UsuarioRepository extends JpaRepository<Usuario,Integer> {
 
     public Optional<Usuario> findByNombre(String nombre);
 
-    public List<Usuario> findByFechaEliminacionIsNullAndActivoTrueOrderByIdAsc();
+    public List<Usuario> findByFechaEliminacionIsNullAndVerificadoTrueOrderByIdAsc();
 
     public Optional<Usuario> findByEmail(String email);
 
     public Optional<Usuario> findById(Long id);
 
-    public Optional<Usuario> findByFechaEliminacionIsNullAndActivoTrueAndEmail(String email);
+    public Optional<Usuario> findByFechaEliminacionIsNullAndVerificadoTrueAndEmail(String email);
 
-    public Optional<Usuario> findByFechaEliminacionIsNullAndActivoTrueAndId(Integer id);
+    public Optional<Usuario> findByFechaEliminacionIsNullAndVerificadoTrueAndId(Integer id);
 }

@@ -23,7 +23,7 @@ public class UsuarioService implements IUsuarioService{
         /*
         *  Trae todos los usuarios activos y no eliminados en orden ascendente
         * */
-        List<Usuario> categorias = modelRepository.findByFechaEliminacionIsNullAndActivoTrueOrderByIdAsc();
+        List<Usuario> categorias = modelRepository.findByFechaEliminacionIsNullAndVerificadoTrueOrderByIdAsc();
         return categorias.stream().map(UsuarioMapper::toDTO).toList();
     }
 
@@ -33,7 +33,7 @@ public class UsuarioService implements IUsuarioService{
          * Trae el usuario por su id si no lo encuentra lanza una excepcion
          * Si esta eliminado o inactivo lanza una excepcion
          * */
-        Optional<Usuario> model = modelRepository.findByFechaEliminacionIsNullAndActivoTrueAndId(id);
+        Optional<Usuario> model = modelRepository.findByFechaEliminacionIsNullAndVerificadoTrueAndId(id);
         if (model.isEmpty()) {
             throw new NotFoundException("El usuario con el id " + id + " no existe o no se encuentra activo.");
         }
@@ -44,7 +44,7 @@ public class UsuarioService implements IUsuarioService{
     public Usuario buscarEliminadoPorId(Integer id) {
         /*
          * Trae el usuario por su id si no lo encuentra lanza una excepcion
-         * Si esta eliminado o inactivo lanza una excepcion
+         * Si esta eliminado o no verificado lanza una excepcion
          * */
         Optional<Usuario> model = modelRepository.findById(id);
         if (model.isEmpty()) {
@@ -60,9 +60,9 @@ public class UsuarioService implements IUsuarioService{
     public Usuario buscarPorEmail(String email) {
         /*
          * Trae el usuario por su email si no lo encuentra lanza una excepcion
-         * Si esta eliminado o inactivo lanza una excepcion
+         * Si esta eliminado o no verificado lanza una excepcion
          * */
-        Optional<Usuario> model = modelRepository.findByFechaEliminacionIsNullAndActivoTrueAndEmail(email);
+        Optional<Usuario> model = modelRepository.findByFechaEliminacionIsNullAndVerificadoTrueAndEmail(email);
         if (model.isEmpty()) {
             throw new NotFoundException("El usuario con email " + email + " no existe o no se encuentra activo.");
         }
@@ -172,5 +172,22 @@ public class UsuarioService implements IUsuarioService{
         }
         return true;
     }
-    
+
+    @Override
+    public Usuario verificarAtributos(Usuario model) {
+
+    }
+
+    @Override
+    public void verificarNombre(String nombre) {
+        ExpresionesRegulares expReg = new ExpresionesRegulares();
+        if (!expReg.verificarCaracteres(nombre){
+            throw new BadRequestException("El nombre no puede contener caracteres especiales.");
+        }
+        nombre = expReg.corregirCadena(nombre);
+        if (nombre == ""){
+            throw new BadRequestException("El formato del nombre es inválido.");
+        }
+
+    }
 }

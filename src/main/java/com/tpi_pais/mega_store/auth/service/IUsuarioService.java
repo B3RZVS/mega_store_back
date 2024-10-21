@@ -32,4 +32,8 @@ public interface IUsuarioService {
     public Usuario buscarEliminadoPorId (Integer id);
 
     public Usuario buscarEliminadoPorEmail (String email);
+
+    public Usuario verificarAtributos (Usuario model);
+
+    public void verificarNombre (String nombre);
 }

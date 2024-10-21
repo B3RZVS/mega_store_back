@@ -1,17 +1,26 @@
 package com.tpi_pais.mega_store.auth.controller.UsuarioController;
 
+import com.tpi_pais.mega_store.auth.dto.RolDTO;
+import com.tpi_pais.mega_store.auth.dto.UsuarioDTO;
 import com.tpi_pais.mega_store.auth.service.IRolService;
+import com.tpi_pais.mega_store.auth.service.IUsuarioService;
+import com.tpi_pais.mega_store.exception.ResponseService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/auth")
 public class PostUsuarioController {
     @Autowired
-    private IRolService modelService;
+    private IUsuarioService modelService;
 
+    @Autowired
+    private ResponseService responseService;
 
+    @PostMapping("/usuario")
+    public ResponseEntity<?> guardar(@RequestBody UsuarioDTO model){
+        model = modelService.verificarAtributos(model);
+    }
 }

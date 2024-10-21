@@ -27,12 +27,10 @@ public class Usuario {
        - telefono (String, cadena de caracteres)
       -  contrasena (String, obligatorio, encriptada)
         codigoVerificacion (String, generado tras el registro)
-       - fechaCreacion (Date, se asigna automáticamente)
       -  fechaEliminacion (Date)
-      -  activo (Boolean, indica si la cuenta está activa después de la verificación)
         verificado (Boolean, indica si la cuenta fue verificada con éxito)
+        * -fechaCreacion (Date) para controlar que el codigo de verificacion este disponible durante 15 minutos.
     * */
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,8 +61,8 @@ public class Usuario {
     @Column(name = "codigo_verificacion")
     private String codigoVerificacion;
 
-    @Column(name = "activo")
-    private Boolean activo;
+    @Column(name = "verificado")
+    private Boolean verificado;
 
     @NotNull
     @Column(name = "password")
