@@ -1,5 +1,6 @@
 package com.tpi_pais.mega_store.products.service;
 
+
 import com.tpi_pais.mega_store.products.dto.CategoriaDTO;
 import com.tpi_pais.mega_store.products.model.Categoria;
 
@@ -10,6 +11,8 @@ public interface ICategoriaService {
 
     public Categoria buscarPorId(Integer id);
 
+    public Categoria buscarEliminadoPorId(Integer id);
+
     public Categoria buscarPorNombre (String nombre);
 
     public CategoriaDTO guardar(CategoriaDTO model);
@@ -19,4 +22,8 @@ public interface ICategoriaService {
     public void eliminar(Categoria model);
 
     public void recuperar(Categoria model);
+
+    public CategoriaDTO verificarAtributos (CategoriaDTO categoriaDTO);
+
+    public boolean categoriaExistente (String nombre);
 }

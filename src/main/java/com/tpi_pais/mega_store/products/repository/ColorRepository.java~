@@ -1,6 +1,5 @@
 package com.tpi_pais.mega_store.products.repository;
 
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.tpi_pais.mega_store.products.model.Color;
 
@@ -12,8 +11,4 @@ public interface ColorRepository extends JpaRepository<Color,Integer>{
     List<Color> findByFechaEliminacionIsNullOrderByIdAsc();
 
     Optional<Color> findByNombre(String nombre);
-
-    Optional<Color> findByIdAndFechaEliminacionIsNull(Integer id);
-
-    Optional<Color> findByIdAndFechaEliminacionIsNotNull(Integer id);
 }

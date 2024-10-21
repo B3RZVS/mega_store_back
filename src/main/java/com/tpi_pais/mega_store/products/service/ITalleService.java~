@@ -24,6 +24,4 @@ public interface ITalleService {
     public void recuperar(Talle model);
 
     public TalleDTO verificarAtributos (TalleDTO talleDTO);
-
-    public boolean talleExistente (String nombre);
 }

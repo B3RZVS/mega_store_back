@@ -1,5 +1,6 @@
 package com.tpi_pais.mega_store.products.service;
 
+import com.tpi_pais.mega_store.products.dto.ColorDTO;
 import com.tpi_pais.mega_store.products.dto.MarcaDTO;
 import com.tpi_pais.mega_store.products.model.Marca;
 
@@ -10,6 +11,8 @@ public interface IMarcaService {
 
     public Marca buscarPorId(Integer id);
 
+    public Marca buscarEliminadoPorId(Integer id);
+
     public Marca buscarPorNombre (String nombre);
 
     public MarcaDTO guardar(MarcaDTO model);
@@ -19,4 +22,8 @@ public interface IMarcaService {
     public void eliminar(Marca model);
 
     public void recuperar(Marca model);
+
+    public MarcaDTO verificarAtributos (MarcaDTO marcaDTO);
+
+    public boolean marcaExistente (String nombre);
 }

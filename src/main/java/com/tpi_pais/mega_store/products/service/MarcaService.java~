@@ -92,9 +92,4 @@ public class MarcaService implements IMarcaService {
         marcaDTO.capitalizarNombre();
         return marcaDTO;
     }
-
-    @Override
-    public boolean marcaExistente(String nombre) {
-        return modelRepository.findByNombre(nombre).isPresent();
-    }
 }

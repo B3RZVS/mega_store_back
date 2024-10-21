@@ -12,6 +12,8 @@ public interface IColorService {
 
     public Color buscarPorId(Integer id);
 
+    public Color buscarEliminadoPorId(Integer id);
+
     public Color buscarPorNombre (String nombre);
 
     public ColorDTO guardar(ColorDTO model);
@@ -21,4 +23,8 @@ public interface IColorService {
     public void eliminar(Color model);
 
     public void recuperar(Color model);
+
+    public ColorDTO verificarAtributos (ColorDTO colorDTO);
+
+    public boolean colorExistente (String nombre);
 }

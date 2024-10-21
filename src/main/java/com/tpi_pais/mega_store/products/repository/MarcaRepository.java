@@ -11,4 +11,8 @@ public interface MarcaRepository extends JpaRepository<Marca,Integer> {
     List<Marca> findByFechaEliminacionIsNullOrderByIdAsc();
 
     Optional<Marca> findByNombre(String nombre);
+
+    Optional<Marca> findByIdAndFechaEliminacionIsNull(Integer id);
+
+    Optional<Marca> findByIdAndFechaEliminacionIsNotNull(Integer id);
 }

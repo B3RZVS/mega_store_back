@@ -11,5 +11,9 @@ public interface CategoriaRepository extends JpaRepository  <Categoria,Integer>{
     List<Categoria> findByFechaEliminacionIsNullOrderByIdAsc();
 
     Optional<Categoria> findByNombre(String nombre);
+
+    Optional<Categoria> findByIdAndFechaEliminacionIsNull(Integer id);
+
+    Optional<Categoria> findByIdAndFechaEliminacionIsNotNull(Integer id);
 }
 

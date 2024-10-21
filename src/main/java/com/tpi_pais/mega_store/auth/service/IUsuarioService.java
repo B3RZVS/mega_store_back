@@ -2,15 +2,18 @@ package com.tpi_pais.mega_store.auth.service;
 
 import com.tpi_pais.mega_store.auth.dto.UsuarioDTO;
 import com.tpi_pais.mega_store.auth.model.Usuario;
+import com.tpi_pais.mega_store.utils.ApiResponse;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IUsuarioService {
     public List<UsuarioDTO> listar();
 
     public Usuario buscarPorId(Integer id);
 
-    public Usuario buscarPorNombre (String nombre);
+    public Usuario buscarPorEmail (String email);
 
     public UsuarioDTO guardar(UsuarioDTO model);
 
@@ -24,5 +27,9 @@ public interface IUsuarioService {
 
     public void setPassword(Usuario model, String password);
 
+    public boolean verificarEmailFormato (String email);
 
+    public Usuario buscarEliminadoPorId (Integer id);
+
+    public Usuario buscarEliminadoPorEmail (String email);
 }

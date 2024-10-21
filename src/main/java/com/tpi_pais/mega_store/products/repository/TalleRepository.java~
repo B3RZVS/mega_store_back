@@ -11,8 +11,4 @@ public interface TalleRepository extends JpaRepository<Talle,Integer> {
     List<Talle> findByFechaEliminacionIsNullOrderByIdAsc();
 
     Optional<Talle> findByNombre(String nombre);
-
-    Optional<Talle> findByIdAndFechaEliminacionIsNull(Integer id);
-
-    Optional<Talle> findByIdAndFechaEliminacionIsNotNull(Integer id);
 }

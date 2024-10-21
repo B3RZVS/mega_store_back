@@ -1,5 +1,6 @@
 package com.tpi_pais.mega_store.products.service;
 
+import com.tpi_pais.mega_store.products.dto.MarcaDTO;
 import com.tpi_pais.mega_store.products.dto.SucursalDTO;
 import com.tpi_pais.mega_store.products.dto.SucursalDTO;
 import com.tpi_pais.mega_store.products.model.Sucursal;
@@ -13,6 +14,8 @@ public interface ISucursalService {
 
     public Sucursal buscarPorId(Integer id);
 
+    public Sucursal buscarEliminadoPorId(Integer id);
+
     public Sucursal buscarPorNombre (String nombre);
 
     public SucursalDTO guardar(SucursalDTO model);
@@ -22,4 +25,8 @@ public interface ISucursalService {
     public void eliminar(Sucursal model);
 
     public void recuperar(Sucursal model);
+
+    public SucursalDTO verificarAtributos (SucursalDTO sucursalDTO);
+
+    public boolean sucursalExistente(String nombre);
 }

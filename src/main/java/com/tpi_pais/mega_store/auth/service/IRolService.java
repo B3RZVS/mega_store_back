@@ -10,7 +10,11 @@ public interface IRolService {
 
     public Rol buscarPorId(Integer id);
 
+    public Rol buscarEliminadoPorId(Integer id);
+
     public Rol buscarPorNombre (String nombre);
+
+    public Rol buscarEliminadoPorNombre(String nombre);
 
     public RolDTO guardar(RolDTO model);
 
@@ -19,5 +23,10 @@ public interface IRolService {
     public void eliminar(Rol model);
 
     public void recuperar(Rol model);
+
+    public RolDTO verificarAtributos (RolDTO rolDTO);
+
+    public boolean rolExistente (String nombre);
+
 }
 

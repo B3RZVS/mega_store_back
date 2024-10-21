@@ -9,8 +9,3 @@ public class BadRequestException extends RuntimeException {
         super(message);
     }
 }
-/*
-* El BadRequestException es una excepcion personalizada que se utiliza para manejar
-* errores de validaciones de datos.
-* Por ejemplo: Cuando un argumento tiene que tener un tipo de dato correcto.
-* */
