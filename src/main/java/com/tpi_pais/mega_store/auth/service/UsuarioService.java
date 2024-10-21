@@ -175,13 +175,13 @@ public class UsuarioService implements IUsuarioService{
 
     @Override
     public Usuario verificarAtributos(Usuario model) {
-
+        return model;
     }
 
     @Override
     public void verificarNombre(String nombre) {
         ExpresionesRegulares expReg = new ExpresionesRegulares();
-        if (!expReg.verificarCaracteres(nombre){
+        if (!expReg.verificarCaracteres(nombre)){
             throw new BadRequestException("El nombre no puede contener caracteres especiales.");
         }
         nombre = expReg.corregirCadena(nombre);
