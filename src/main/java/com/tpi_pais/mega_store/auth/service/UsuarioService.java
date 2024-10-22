@@ -7,6 +7,7 @@ import com.tpi_pais.mega_store.auth.repository.UsuarioRepository;
 import com.tpi_pais.mega_store.exception.BadRequestException;
 import com.tpi_pais.mega_store.exception.NotFoundException;
 import com.tpi_pais.mega_store.utils.ExpresionesRegulares;
+import org.apache.catalina.mapper.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -174,7 +175,9 @@ public class UsuarioService implements IUsuarioService{
     }
 
     @Override
-    public Usuario verificarAtributos(Usuario model) {
+    public Usuario verificarAtributos(UsuarioDTO modelDTO) {
+        UsuarioMapper mapper = new UsuarioMapper();
+        Usuario model = mapper.toEntity(modelDTO);
         return model;
     }
 

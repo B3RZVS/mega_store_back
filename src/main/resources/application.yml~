@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: back
+  datasource:
+    url: jdbc:postgresql://149.50.137.137:5432/mega_store
+    username: root
+    password: 11salta22
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties:
+      hibernate:
+        ddl-auto: update
+        dialect: org.hibernate.dialect.H2Dialect
+  web:
+    cors:
+      allowed-origins: "http://localhost:5173/"

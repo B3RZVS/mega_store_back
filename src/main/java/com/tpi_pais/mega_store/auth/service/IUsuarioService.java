@@ -33,7 +33,7 @@ public interface IUsuarioService {
 
     public Usuario buscarEliminadoPorEmail (String email);
 
-    public Usuario verificarAtributos (Usuario model);
+    public Usuario verificarAtributos (UsuarioDTO modelDTO);
 
     public void verificarNombre (String nombre);
 }

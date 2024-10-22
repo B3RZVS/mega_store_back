@@ -2,6 +2,7 @@ package com.tpi_pais.mega_store.auth.controller.UsuarioController;
 
 import com.tpi_pais.mega_store.auth.dto.RolDTO;
 import com.tpi_pais.mega_store.auth.dto.UsuarioDTO;
+import com.tpi_pais.mega_store.auth.model.Usuario;
 import com.tpi_pais.mega_store.auth.service.IRolService;
 import com.tpi_pais.mega_store.auth.service.IUsuarioService;
 import com.tpi_pais.mega_store.exception.ResponseService;
@@ -21,6 +22,7 @@ public class PostUsuarioController {
 
     @PostMapping("/usuario")
     public ResponseEntity<?> guardar(@RequestBody UsuarioDTO model){
-        model = modelService.verificarAtributos(model);
+        Usuario modelu = modelService.verificarAtributos(model);
+        return responseService.successResponse("Se ha registrado el usuario");
     }
 }

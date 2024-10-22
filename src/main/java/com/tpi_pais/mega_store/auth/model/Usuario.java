@@ -103,7 +103,7 @@ public class Usuario {
     }
 
     public void activar () {
-        this.activo = true;
+        this.verificado = true;
     }
 
     public boolean esEliminado() { return this.fechaEliminacion != null; }
