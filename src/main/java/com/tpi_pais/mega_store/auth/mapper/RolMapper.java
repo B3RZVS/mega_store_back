@@ -2,7 +2,6 @@ package com.tpi_pais.mega_store.auth.mapper;
 
 import com.tpi_pais.mega_store.auth.dto.RolDTO;
 import com.tpi_pais.mega_store.auth.model.Rol;
-import com.tpi_pais.mega_store.products.model.Categoria;
 
 public class RolMapper {
     public static RolDTO toDTO(Rol model) {

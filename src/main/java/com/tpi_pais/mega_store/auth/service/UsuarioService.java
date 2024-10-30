@@ -12,12 +12,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 @Service
 public class UsuarioService implements IUsuarioService{
 
     @Autowired
     private UsuarioRepository modelRepository;
+
+    @Autowired
+    private ExpresionesRegulares expReg;
 
     @Override
     public List<UsuarioDTO> listar() {
@@ -162,35 +166,42 @@ public class UsuarioService implements IUsuarioService{
     }
 
     @Override
-    public boolean verificarEmailFormato(String email) {
-        /*
-         * Verifica el formato del email
-         * Si el formato es incorrecto lanza una excepcion
-         * */
-        ExpresionesRegulares expReg = new ExpresionesRegulares();
-        if (!expReg.verificarEmail(email)) {
-            throw new BadRequestException("El formato del email es inválido.");
-        }
-        return true;
-    }
-
-    @Override
     public Usuario verificarAtributos(UsuarioDTO modelDTO) {
-        UsuarioMapper mapper = new UsuarioMapper();
-        Usuario model = mapper.toEntity(modelDTO);
-        return model;
+        this.verificarNombre(modelDTO.getNombre());
+        this.buscarPorEmail(modelDTO.getEmail());
+
     }
 
     @Override
     public void verificarNombre(String nombre) {
-        ExpresionesRegulares expReg = new ExpresionesRegulares();
-        if (!expReg.verificarCaracteres(nombre)){
+        if (Objects.equals(nombre, "")){
+            throw new BadRequestException("Se debe enviar un nombre");
+        }
+        if (!this.expReg.verificarCaracteres(nombre)){
             throw new BadRequestException("El nombre no puede contener caracteres especiales.");
         }
-        nombre = expReg.corregirCadena(nombre);
-        if (nombre == ""){
+        nombre = this.expReg.corregirCadena(nombre);
+        if (Objects.equals(nombre, "")){
             throw new BadRequestException("El formato del nombre es inválido.");
         }
+    }
 
+    @Override
+    public void verificarEmail(String email) {
+        if (Objects.equals(email, "")){
+            throw new BadRequestException("Se debe enviar un email");
+        }
+        if (!this.expReg.verificarEmail(email)){
+            throw new BadRequestException("El formato del email es inválido.");
+        }
+        if (this.emailUtilizado(email)){
+            throw new BadRequestException("El email ya se encuentra registrado.");
+        }
+
+    }
+
+    @Override
+    public boolean emailUtilizado (String email) {
+        return modelRepository.findByEmail(email).isPresent();
     }
 }

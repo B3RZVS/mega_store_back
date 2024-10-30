@@ -27,8 +27,6 @@ public interface IUsuarioService {
 
     public void setPassword(Usuario model, String password);
 
-    public boolean verificarEmailFormato (String email);
-
     public Usuario buscarEliminadoPorId (Integer id);
 
     public Usuario buscarEliminadoPorEmail (String email);
@@ -36,4 +34,8 @@ public interface IUsuarioService {
     public Usuario verificarAtributos (UsuarioDTO modelDTO);
 
     public void verificarNombre (String nombre);
+
+    public void verificarEmail (String email);
+
+    public boolean emailUtilizado (String email);
 }
