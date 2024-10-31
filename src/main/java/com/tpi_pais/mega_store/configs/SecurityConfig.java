@@ -24,7 +24,7 @@ public class SecurityConfig {
                         .requestMatchers("/products/**").permitAll()
                         .requestMatchers("/auth/**").permitAll()
                         // Requiere autenticación para cualquier otra solicitud
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .cors(Customizer.withDefaults()); // Configura CORS aquí
 

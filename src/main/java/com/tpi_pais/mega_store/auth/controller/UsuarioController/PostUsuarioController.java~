@@ -2,7 +2,6 @@ package com.tpi_pais.mega_store.auth.controller.UsuarioController;
 
 import com.tpi_pais.mega_store.auth.dto.RolDTO;
 import com.tpi_pais.mega_store.auth.dto.UsuarioDTO;
-import com.tpi_pais.mega_store.auth.mapper.UsuarioMapper;
 import com.tpi_pais.mega_store.auth.model.Rol;
 import com.tpi_pais.mega_store.auth.model.Usuario;
 import com.tpi_pais.mega_store.auth.service.IRolService;
@@ -45,9 +44,6 @@ public class PostUsuarioController {
         */
         modelService.verificarAtributos(modelDTO);
         Usuario model = modelService.crearUsuario(modelDTO);
-        //Falta enviar el email con el codigo de verificacion asi que por ahora
-        //estna todos verificados
-        UsuarioMapper usuarioMapper = new UsuarioMapper();
-        return responseService.successResponse(usuarioMapper.toDTO(model),"Se ha registrado el usuario");
+        return responseService.successResponse("Se ha registrado el usuario");
     }
 }

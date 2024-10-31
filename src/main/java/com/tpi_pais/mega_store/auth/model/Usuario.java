@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "usuarios")
@@ -34,7 +35,7 @@ public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Size(min = 1, max = 100, message = "El nombre del usuario debe tener menos de 100 caracteres")
     @NotNull
@@ -107,4 +108,8 @@ public class Usuario {
     }
 
     public boolean esEliminado() { return this.fechaEliminacion != null; }
+
+    public void setCodigoVerificacion() {
+        this.codigoVerificacion = UUID.randomUUID().toString().substring(0, 6);
+    }
 }

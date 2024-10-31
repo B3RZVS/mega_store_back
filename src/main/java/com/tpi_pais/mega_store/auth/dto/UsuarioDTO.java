@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Data
 public class UsuarioDTO {
 
-    private Long id;
+    private Integer id;
     private String nombre;
     private String email;
     private String telefono;
@@ -16,6 +16,6 @@ public class UsuarioDTO {
     private String codigoVerificacion;
     private Boolean verificado;
     private String password;
-    private Long rolId;  // Para simplificar la representación del rol
+    private Integer rolId;  // Para simplificar la representación del rol
     private LocalDateTime fechaEliminacion;
 }

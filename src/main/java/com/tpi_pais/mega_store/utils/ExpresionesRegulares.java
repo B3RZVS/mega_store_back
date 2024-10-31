@@ -1,10 +1,12 @@
 package com.tpi_pais.mega_store.utils;
 import lombok.Data;
+import org.springframework.stereotype.Service;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Data
+@Service
 public class ExpresionesRegulares {
 
     private static final Pattern PATRON_NUMEROS = Pattern.compile("^\\d+$");

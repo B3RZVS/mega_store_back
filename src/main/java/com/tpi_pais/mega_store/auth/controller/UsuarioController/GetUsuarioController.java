@@ -67,7 +67,7 @@ public class GetUsuarioController {
          *   Si se encuentra la usuario, y la misma esta elimianda se retorna un badrequest.
          * En caso de que pase todas las verificacioens devuelve el recurso encontrado.
          * */
-        modelService.verificarEmailFormato(email);
+        modelService.verificarEmail(email);
         Usuario model = modelService.buscarPorEmail(email);
         UsuarioDTO modelDTO = UsuarioMapper.toDTO(model);
         return responseService.successResponse(modelDTO, "OK");

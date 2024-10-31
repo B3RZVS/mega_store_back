@@ -31,11 +31,21 @@ public interface IUsuarioService {
 
     public Usuario buscarEliminadoPorEmail (String email);
 
-    public Usuario verificarAtributos (UsuarioDTO modelDTO);
+    public void verificarAtributos (UsuarioDTO modelDTO);
 
     public void verificarNombre (String nombre);
 
     public void verificarEmail (String email);
 
     public boolean emailUtilizado (String email);
+
+    public void verificarTelefono (String telefono);
+
+    public void verificarDireccion (String direccion);
+
+    public void verificarRol (Integer rolId);
+
+    public void verificarPassword (String password);
+
+    public Usuario crearUsuario (UsuarioDTO modelDTO);
 }

@@ -15,12 +15,12 @@ public class UsuarioMapper {
         dto.setFechaCreacion(model.getFechaCreacion());
         dto.setCodigoVerificacion(model.getCodigoVerificacion());
         dto.setVerificado(model.getVerificado());
-        dto.setPassword(model.getPassword());
+        dto.setPassword("");
         dto.setFechaEliminacion(model.getFechaEliminacion());
 
         // Asegurarse de que el rol no sea nulo antes de acceder a su ID
         if (model.getRol() != null) {
-            dto.setRolId(Long.valueOf(model.getRol().getId()));
+            dto.setRolId(model.getRol().getId());
         }
         return dto;
     }

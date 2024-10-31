@@ -2,6 +2,7 @@ package com.tpi_pais.mega_store.auth.service;
 
 import com.tpi_pais.mega_store.auth.dto.UsuarioDTO;
 import com.tpi_pais.mega_store.auth.mapper.UsuarioMapper;
+import com.tpi_pais.mega_store.auth.model.Rol;
 import com.tpi_pais.mega_store.auth.model.Usuario;
 import com.tpi_pais.mega_store.auth.repository.UsuarioRepository;
 import com.tpi_pais.mega_store.exception.BadRequestException;
@@ -166,10 +167,19 @@ public class UsuarioService implements IUsuarioService{
     }
 
     @Override
-    public Usuario verificarAtributos(UsuarioDTO modelDTO) {
+    public void verificarAtributos(UsuarioDTO modelDTO) {
+        // Nombre: Verifico y lo corrijo
         this.verificarNombre(modelDTO.getNombre());
-        this.buscarPorEmail(modelDTO.getEmail());
-
+        // Email
+        this.verificarEmail(modelDTO.getEmail());
+        // Numero de Telefono
+        this.verificarTelefono(modelDTO.getTelefono());
+        // Direccion de envio: Verifico y lo corrijo
+        this.verificarDireccion(modelDTO.getDireccionEnvio());
+        //Rol
+        this.verificarRol(modelDTO.getRolId());
+        //Password
+        this.verificarPassword(modelDTO.getPassword());
     }
 
     @Override
@@ -180,8 +190,7 @@ public class UsuarioService implements IUsuarioService{
         if (!this.expReg.verificarCaracteres(nombre)){
             throw new BadRequestException("El nombre no puede contener caracteres especiales.");
         }
-        nombre = this.expReg.corregirCadena(nombre);
-        if (Objects.equals(nombre, "")){
+        if (Objects.equals(this.expReg.corregirCadena(nombre), "")){
             throw new BadRequestException("El formato del nombre es inválido.");
         }
     }
@@ -197,11 +206,77 @@ public class UsuarioService implements IUsuarioService{
         if (this.emailUtilizado(email)){
             throw new BadRequestException("El email ya se encuentra registrado.");
         }
-
     }
 
     @Override
     public boolean emailUtilizado (String email) {
         return modelRepository.findByEmail(email).isPresent();
+    }
+
+    @Override
+    public void verificarTelefono(String telefono) {
+        if (Objects.equals(telefono, "")){
+            throw new BadRequestException("Se debe enviar un telefono");
+        }
+        if (!this.expReg.verificarNumeros(telefono)){
+            throw new BadRequestException("El formato del telefono es inválido, debe contener solo numeros.");
+        }
+    }
+
+    @Override
+    public void verificarDireccion(String direccion) {
+        if (Objects.equals(direccion, "")){
+            throw new BadRequestException("Se debe enviar un direccion");
+        }
+        if (!this.expReg.verificarCaracteres(direccion)){
+            throw new BadRequestException("La direccion no puede contener caracteres especiales.");
+        }
+        if (Objects.equals(this.expReg.corregirCadena(direccion), "")){
+            throw new BadRequestException("El formato de la direccion es inválido.");
+        }
+    }
+
+    @Override
+    public void verificarRol(Integer rol) {
+        if (rol == null){
+            throw new BadRequestException("Se debe enviar un rol");
+        }
+        RolService rolService = new RolService();
+        Rol r = rolService.buscarPorId(rol);
+    }
+
+    @Override
+    public void verificarPassword(String password) {
+        if (Objects.equals(password, "")){
+            throw new BadRequestException("Se debe enviar una contrase;a");
+        }
+    }
+
+    @Override
+    public Usuario crearUsuario (UsuarioDTO modelDTO){
+        //Creo el usuario
+        Usuario model = new Usuario();
+        //Nombre
+        model.setNombre(this.expReg.corregirCadena(modelDTO.getNombre()));
+        //Email
+        model.setEmail(modelDTO.getEmail());
+        //Telefono
+        model.setTelefono(modelDTO.getTelefono());
+        //Direccion
+        model.setDireccionEnvio(this.expReg.corregirCadena(modelDTO.getDireccionEnvio()));
+        //Rol
+        RolService rolService = new RolService();
+        model.setRol(rolService.buscarPorId(modelDTO.getRolId()));
+        //Fecha Creacion
+        model.setFechaCreacion();
+        //Codigo Verificacion
+        model.setCodigoVerificacion();
+        //Verificado: Por ahora como falta enviar el codigo lo seteo en True
+        model.setVerificado(true);
+        //Password
+        model.setPassword(modelDTO.getPassword());
+        // Guardo el model
+        this.guardar(model);
+        return model;
     }
 }
