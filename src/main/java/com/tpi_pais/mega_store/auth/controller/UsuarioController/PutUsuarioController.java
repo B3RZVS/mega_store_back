@@ -35,9 +35,9 @@ public class PutUsuarioController {
     Model: Verificar que el modelo User permita la actualización de los campos correspondientes.
     DTO: El UserDTO contendrá los datos actualizables, excepto correo y contraseña.*/
         Usuario model = modelService.buscarPorId(modelDTO.getId());
-        modelService.verificarNombre(modelDTO.getNombre());
-        modelService.verificarDireccion(modelDTO.getDireccionEnvio());
-        modelService.verificarTelefono(modelDTO.getTelefono());
+        modelService.verificarNombre(modelDTO.getNombre(), "PUT");
+        modelService.verificarDireccion(modelDTO.getDireccionEnvio(), "PUT");
+        modelService.verificarTelefono(modelDTO.getTelefono(), "PUT");
         model.setNombre(modelDTO.getNombre());
         model.setDireccionEnvio(modelDTO.getDireccionEnvio());
         model.setTelefono(modelDTO.getTelefono());

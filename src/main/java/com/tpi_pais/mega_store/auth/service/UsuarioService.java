@@ -169,13 +169,13 @@ public class UsuarioService implements IUsuarioService{
     @Override
     public void verificarAtributos(UsuarioDTO modelDTO) {
         // Nombre: Verifico y lo corrijo
-        this.verificarNombre(modelDTO.getNombre());
+        this.verificarNombre(modelDTO.getNombre(), "POST");
         // Email
         this.verificarEmail(modelDTO.getEmail());
         // Numero de Telefono
-        this.verificarTelefono(modelDTO.getTelefono());
+        this.verificarTelefono(modelDTO.getTelefono(), "POST");
         // Direccion de envio: Verifico y lo corrijo
-        this.verificarDireccion(modelDTO.getDireccionEnvio());
+        this.verificarDireccion(modelDTO.getDireccionEnvio(), "POST");
         //Rol
         this.verificarRol(modelDTO.getRolId());
         //Password
@@ -216,8 +216,9 @@ public class UsuarioService implements IUsuarioService{
         return modelRepository.findByEmail(email).isPresent();
     }
 
+
     @Override
-    public void verificarTelefono(String telefono) {
+    public void verificarTelefono(String telefono, String metodo) {
         if (Objects.equals(telefono, "")){
             throw new BadRequestException("Se debe enviar un telefono");
         }
@@ -227,7 +228,7 @@ public class UsuarioService implements IUsuarioService{
     }
 
     @Override
-    public void verificarDireccion(String direccion) {
+    public void verificarDireccion(String direccion, String metodo) {
         if (Objects.equals(direccion, "")){
             throw new BadRequestException("Se debe enviar un direccion");
         }
