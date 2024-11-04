@@ -33,15 +33,15 @@ public interface IUsuarioService {
 
     public void verificarAtributos (UsuarioDTO modelDTO);
 
-    public void verificarNombre (String nombre,String metodo);
+    public void verificarNombre (String nombre);
 
     public void verificarEmail (String email);
 
     public boolean emailUtilizado (String email);
 
-    public void verificarTelefono (String telefono, String metodo);
+    public void verificarTelefono (String telefono);
 
-    public void verificarDireccion (String direccion, String metodo);
+    public void verificarDireccion (String direccion);
 
     public void verificarRol (Integer rolId);
 
