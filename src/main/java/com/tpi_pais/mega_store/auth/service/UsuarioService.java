@@ -24,6 +24,9 @@ public class UsuarioService implements IUsuarioService{
     @Autowired
     private ExpresionesRegulares expReg;
 
+    @Autowired
+    private RolService rolService;
+
     @Override
     public List<UsuarioDTO> listar() {
         /*
@@ -245,7 +248,6 @@ public class UsuarioService implements IUsuarioService{
         if (rol == null){
             throw new BadRequestException("Se debe enviar un rol");
         }
-        RolService rolService = new RolService();
         Rol r = rolService.buscarPorId(rol);
     }
 
@@ -269,7 +271,6 @@ public class UsuarioService implements IUsuarioService{
         //Direccion
         model.setDireccionEnvio(this.expReg.corregirCadena(modelDTO.getDireccionEnvio()));
         //Rol
-        RolService rolService = new RolService();
         model.setRol(rolService.buscarPorId(modelDTO.getRolId()));
         //Fecha Creacion
         model.setFechaCreacion();
@@ -280,7 +281,7 @@ public class UsuarioService implements IUsuarioService{
         //Password
         model.setPassword(modelDTO.getPassword());
         // Guardo el model
-        this.guardar(model);
-        return model;
+        Usuario modelGuardado = this.guardar(model);
+        return modelGuardado;
     }
 }
