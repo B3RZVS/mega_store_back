@@ -183,13 +183,10 @@ public class UsuarioService implements IUsuarioService{
     }
 
     @Override
-    public void verificarNombre(String nombre, String metodo) {
-        if (metodo=="POST"){
-            if (Objects.equals(nombre, "")){
-                throw new BadRequestException("Se debe enviar un nombre");
-            }
+    public void verificarNombre(String nombre) {
+        if (Objects.equals(nombre, "")){
+            throw new BadRequestException("Se debe enviar un nombre");
         }
-
         if (!this.expReg.verificarCaracteres(nombre)){
             throw new BadRequestException("El nombre no puede contener caracteres especiales.");
         }
