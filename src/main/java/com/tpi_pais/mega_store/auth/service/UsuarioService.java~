@@ -281,7 +281,7 @@ public class UsuarioService implements IUsuarioService{
         //Codigo Verificacion
         model.setCodigoVerificacion();
         //Verificado: Por ahora como falta enviar el codigo lo seteo en True
-        model.setVerificado(false);
+        model.setVerificado(true);
         //Password
         model.setPassword(modelDTO.getPassword());
         // Guardo el model

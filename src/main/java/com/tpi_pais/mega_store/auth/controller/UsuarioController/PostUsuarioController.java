@@ -35,8 +35,7 @@ public class PostUsuarioController {
         */
         modelService.verificarAtributos(modelDTO);
         Usuario model = modelService.crearUsuario(modelDTO);
-        //Falta enviar el email con el codigo de verificacion asi que por ahora
-        //estna todos verificados
+        modelService.enviarCodigoVerificacion(model.getEmail(), model.getCodigoVerificacion());
         UsuarioMapper usuarioMapper = new UsuarioMapper();
         return responseService.successResponse(usuarioMapper.toDTO(model),"Se ha registrado el usuario");
     }
