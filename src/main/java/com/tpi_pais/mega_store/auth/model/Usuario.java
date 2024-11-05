@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "usuarios")
@@ -27,16 +28,14 @@ public class Usuario {
        - telefono (String, cadena de caracteres)
       -  contrasena (String, obligatorio, encriptada)
         codigoVerificacion (String, generado tras el registro)
-       - fechaCreacion (Date, se asigna automáticamente)
       -  fechaEliminacion (Date)
-      -  activo (Boolean, indica si la cuenta está activa después de la verificación)
         verificado (Boolean, indica si la cuenta fue verificada con éxito)
+        * -fechaCreacion (Date) para controlar que el codigo de verificacion este disponible durante 15 minutos.
     * */
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Size(min = 1, max = 100, message = "El nombre del usuario debe tener menos de 100 caracteres")
     @NotNull
@@ -63,8 +62,8 @@ public class Usuario {
     @Column(name = "codigo_verificacion")
     private String codigoVerificacion;
 
-    @Column(name = "activo")
-    private Boolean activo;
+    @Column(name = "verificado")
+    private Boolean verificado;
 
     @NotNull
     @Column(name = "password")
@@ -105,8 +104,12 @@ public class Usuario {
     }
 
     public void activar () {
-        this.activo = true;
+        this.verificado = true;
     }
 
     public boolean esEliminado() { return this.fechaEliminacion != null; }
+
+    public void setCodigoVerificacion() {
+        this.codigoVerificacion = UUID.randomUUID().toString().substring(0, 6);
+    }
 }

@@ -28,7 +28,7 @@ public class PutSucursalController {
             return responseService.successResponse(modelGuardado, "Sucursal actualiazado");
         }
     }
-    @PutMapping("/categoria/recuperar/{id}")
+    @PutMapping("/sucursal/recuperar/{id}")
     public ResponseEntity<?> recuperar(@PathVariable Integer id) {
         Sucursal model = modelService.buscarEliminadoPorId(id);
         modelService.recuperar(model);

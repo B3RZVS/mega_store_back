@@ -20,6 +20,7 @@ public class GetRolController {
     @Autowired
     private ResponseService responseService;
 
+
     @GetMapping({"/roles"})
     public ResponseEntity<?> getAll() {
         List<RolDTO> roles = modelService.listar();

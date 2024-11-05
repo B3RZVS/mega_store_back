@@ -27,9 +27,27 @@ public interface IUsuarioService {
 
     public void setPassword(Usuario model, String password);
 
-    public boolean verificarEmailFormato (String email);
-
     public Usuario buscarEliminadoPorId (Integer id);
 
     public Usuario buscarEliminadoPorEmail (String email);
+
+    public void verificarAtributos (UsuarioDTO modelDTO);
+
+    public void verificarNombre (String nombre,String metodo);
+
+    public void verificarEmail (String email);
+
+    public boolean emailUtilizado (String email);
+
+    public void verificarTelefono (String telefono, String metodo);
+
+    public void verificarDireccion (String direccion, String metodo);
+
+    public void verificarRol (Integer rolId);
+
+    public void verificarPassword (String password);
+
+    public Usuario crearUsuario (UsuarioDTO modelDTO);
+
+    public void enviarCodigoVerificacion (String email, String codigoVerificacion);
 }

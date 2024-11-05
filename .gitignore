@@ -34,4 +34,4 @@ build/
 
 ### El application.yml porque tiene las credenciales de la bd ###
 /src/main/resources/application.yml
-mega_store/
+
