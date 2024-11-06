@@ -20,7 +20,7 @@ public class StringUtils {
         return capitalizedString.toString().trim(); // Elimina el espacio final
     }
 
-    public String limpiarToken (String token) {
+    public static String limpiarToken (String token) {
         return token.replace("Token ", "");
     }
 }

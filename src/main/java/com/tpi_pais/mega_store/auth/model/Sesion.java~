@@ -54,6 +54,6 @@ public class Sesion {
     public boolean esActivo() {
         Duration duration = Duration.between(this.getFechaCreacion(), LocalDateTime.now());
         long horasTranscurridas = duration.toHours();
-        return horasTranscurridas < 8;
+        return horasTranscurridas > 8;
     }
 }

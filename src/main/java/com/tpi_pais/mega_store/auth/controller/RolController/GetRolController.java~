@@ -4,7 +4,6 @@ import com.tpi_pais.mega_store.auth.dto.RolDTO;
 import com.tpi_pais.mega_store.auth.mapper.RolMapper;
 import com.tpi_pais.mega_store.auth.model.Rol;
 import com.tpi_pais.mega_store.auth.service.IRolService;
-import com.tpi_pais.mega_store.configs.SessionRequired;
 import com.tpi_pais.mega_store.exception.BadRequestException;
 import com.tpi_pais.mega_store.exception.ResponseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,6 @@ public class GetRolController {
     private ResponseService responseService;
 
 
-    @SessionRequired
     @GetMapping({"/roles"})
     public ResponseEntity<?> getAll() {
         List<RolDTO> roles = modelService.listar();

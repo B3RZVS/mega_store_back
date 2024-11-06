@@ -36,6 +36,6 @@ public class LogoutController {
          * y eliminarla
          * */
         modelService.eliminarSesion(sesionDTO.getToken());
-        return responseService.successResponse(null, "Sesion eliminada");
+        return responseService.successResponse(null, "Sesion creada");
     }
 }
