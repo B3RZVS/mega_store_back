@@ -16,10 +16,18 @@ public class ProductoDTO {
     private BigDecimal peso;
     private Integer stockMedio;
     private Integer stockMinimo;
+    private Integer stockActual;
     private String foto;
+    private String descripcion;
 
-    public boolean noTieneNombre (){
-        return this.getNombre() == null || this.getNombre() == "";
+    private Integer categoriaId;
+    private Integer sucursalId;
+    private Integer marcaId;
+    private Integer talleId;
+    private Integer colorId;
+
+    public boolean noTieneNombre() {
+        return this.getNombre() == null || this.getNombre().isEmpty();
     }
 
     public void capitalizarNombre (){
