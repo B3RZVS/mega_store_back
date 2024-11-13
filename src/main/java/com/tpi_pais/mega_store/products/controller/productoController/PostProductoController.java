@@ -35,6 +35,7 @@ public class PostProductoController {
             }
         } else {
             // Guardar nuevo producto
+            System.out.println("casi me guardo");
             ProductoDTO productoGuardado = productoService.guardar(productoDTO);
             return responseService.successResponse(productoGuardado, "Producto guardado");
         }

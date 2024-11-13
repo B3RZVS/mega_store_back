@@ -21,7 +21,7 @@ public class Producto {
     @Column(name = "nombre")
     private String nombre;
 
-    @Size(max = 500, message = "La descripción no debe exceder los 500 caracteres")
+    @Size(max = 100, message = "La descripción no debe exceder los 500 caracteres")
     @Column(name = "descripcion")
     private String descripcion;
 
@@ -92,4 +92,5 @@ public class Producto {
     public boolean esEliminado() {
         return this.fechaEliminacion != null;
     }
+
 }
