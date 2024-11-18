@@ -3,6 +3,8 @@ package com.tpi_pais.mega_store.products.service;
 import com.tpi_pais.mega_store.products.model.Marca;
 import com.tpi_pais.mega_store.products.model.Producto;
 import com.tpi_pais.mega_store.products.dto.ProductoDTO;
+
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface IProductoService {
@@ -27,4 +29,27 @@ public interface IProductoService {
     boolean productoExistente(String nombre); // Verifica si un producto con el mismo nombre ya existe
 
     void actualizarStock(Producto producto, int cantidad, boolean esEntrada); // Actualiza stock del producto
+    // Métodos de verificación de atributos individuales
+    void verificarNombre(ProductoDTO productoDTO); // Verifica y formatea el nombre del producto
+
+    void verificarDescripcion(String descripcion); // Verifica longitud de la descripción
+
+    void verificarPrecio(BigDecimal precio); // Verifica que el precio sea mayor que 0
+
+    void verificarPeso(BigDecimal peso); // Verifica que el peso sea mayor que 0
+
+    void verificarStock(Integer stockMedio, Integer stockMinimo); // Verifica valores de stock mínimo y medio
+
+
+    void verificarFoto(String nombreFoto); // Valida el formato de la foto
+
+    void verificarCategoria(Integer categoriaId); // Verifica existencia de la categoría
+
+    void verificarSucursal(Integer sucursalId); // Verifica existencia de la sucursal
+
+    void verificarColor(Integer colorId); // Verifica existencia del color
+
+    void verificarTalle(Integer talleId); // Verifica existencia del talle
+
+    void verificarMarca(Integer marcaId);
 }

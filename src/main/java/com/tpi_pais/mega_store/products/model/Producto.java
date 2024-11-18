@@ -21,7 +21,7 @@ public class Producto {
     @Column(name = "nombre")
     private String nombre;
 
-    @Size(max = 500, message = "La descripción no debe exceder los 500 caracteres")
+    @Size(max = 100, message = "La descripción no debe exceder los 500 caracteres")
     @Column(name = "descripcion")
     private String descripcion;
 
@@ -91,18 +91,6 @@ public class Producto {
 
     public boolean esEliminado() {
         return this.fechaEliminacion != null;
-    }
-
-    public void actualizarStock(int cantidad, boolean esEntrada) {
-        if (esEntrada) {
-            this.stockActual += cantidad;
-        } else {
-            this.stockActual -= cantidad;
-        }
-    }
-
-    public boolean validarFoto(String nombreFoto) {
-        return nombreFoto.endsWith(".jpg") || nombreFoto.endsWith(".png");
     }
 
 }
