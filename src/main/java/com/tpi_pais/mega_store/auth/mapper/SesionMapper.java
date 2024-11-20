@@ -1,6 +1,7 @@
 package com.tpi_pais.mega_store.auth.mapper;
 
 import com.tpi_pais.mega_store.auth.dto.SesionDTO;
+import com.tpi_pais.mega_store.auth.model.Rol;
 import com.tpi_pais.mega_store.auth.model.Sesion;
 
 public class SesionMapper {
@@ -9,10 +10,24 @@ public class SesionMapper {
 
         SesionDTO dto = new SesionDTO();
         dto.setId(model.getId());
-        dto.setUsuarioId(model.getUsuario().getId());
+        dto.setUsuario_id(model.getUsuario().getId());
         dto.setToken(model.getToken());
         dto.setFechaCreacion(model.getFechaCreacion());
         dto.setFechaEliminacion(model.getFechaEliminacion());
+        return dto;
+    }
+    public static SesionDTO toDTO(Sesion model, Rol rol) {
+
+        SesionDTO dto = new SesionDTO();
+        dto.setId(model.getId());
+        dto.setUsuario_id(model.getUsuario().getId());
+        dto.setToken(model.getToken());
+        dto.setFechaCreacion(model.getFechaCreacion());
+        dto.setFechaEliminacion(model.getFechaEliminacion());
+        if (rol != null) {
+            dto.setRol_id(rol.getId());
+            dto.setRol_nombre(rol.getNombre());
+        }
         return dto;
     }
 

@@ -11,5 +11,7 @@ public class SesionDTO {
     private String token;
     private LocalDateTime fechaEliminacion;
     private LocalDateTime fechaCreacion;
-    private Integer usuarioId;
+    private Integer usuario_id;
+    private Integer rol_id;
+    private String rol_nombre;
 }
