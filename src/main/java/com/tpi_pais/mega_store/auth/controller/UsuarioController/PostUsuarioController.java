@@ -39,4 +39,11 @@ public class PostUsuarioController {
         UsuarioMapper usuarioMapper = new UsuarioMapper();
         return responseService.successResponse(usuarioMapper.toDTO(model),"Se ha registrado el usuario");
     }
+
+    @PostMapping("/usuario/verificar")
+    public ResponseEntity<?> verificar(@RequestBody UsuarioDTO modelDTO){
+        modelService.verificarCodigoVerificacion(modelDTO.getEmail(), modelDTO.getCodigoVerificacion());
+        return responseService.successResponse(null,"Se ha verificado el usuario");
+    }
+
 }

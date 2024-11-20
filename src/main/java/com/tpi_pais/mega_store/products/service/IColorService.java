@@ -1,7 +1,5 @@
 package com.tpi_pais.mega_store.products.service;
 
-import com.tpi_pais.mega_store.products.dto.CategoriaDTO;
-
 import com.tpi_pais.mega_store.products.dto.ColorDTO;
 import com.tpi_pais.mega_store.products.model.Color;
 
