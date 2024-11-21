@@ -9,6 +9,7 @@ import com.tpi_pais.mega_store.products.dto.HistorialPrecioDTO;
 import com.tpi_pais.mega_store.products.model.HistorialPrecio;
 import com.tpi_pais.mega_store.products.model.Producto;
 import com.tpi_pais.mega_store.products.repository.HistorialPrecioRespository;
+import com.tpi_pais.mega_store.utils.StringUtils;
 import jakarta.persistence.Access;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,6 +19,7 @@ import java.util.Optional;
 public class HistorialPrecioService implements IHistorialPrecioService{
     @Autowired
     private HistorialPrecioRespository repository;
+
     @Override
     public HistorialPrecio crear(HistorialPrecioDTO modelDto, String token){
         this.verificarAtributos(modelDto);
@@ -29,6 +31,18 @@ public class HistorialPrecioService implements IHistorialPrecioService{
         model.setProducto(producto);
         return this.repository.save(model);
     };
+    @Override
+    public void crear(Double precio, Producto producto, String token){
+        this.verificarPrecio(precio);
+        StringUtils stringUtils = new StringUtils();
+        token = stringUtils.limpiarToken(token);
+        Usuario usuario = this.obtenerUsuario(token);
+        HistorialPrecio model = new HistorialPrecio();
+        model.setPrecio(precio);
+        model.setUsuario(usuario);
+        model.setProducto(producto);
+        this.repository.save(model);
+    }
 
     @Override
     public void verificarAtributos(HistorialPrecioDTO modelDto){

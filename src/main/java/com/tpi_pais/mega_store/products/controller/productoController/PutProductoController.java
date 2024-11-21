@@ -6,6 +6,7 @@ import com.tpi_pais.mega_store.products.dto.MarcaDTO;
 import com.tpi_pais.mega_store.products.dto.ProductoDTO;
 import com.tpi_pais.mega_store.products.model.*;
 import com.tpi_pais.mega_store.products.repository.*;
+import com.tpi_pais.mega_store.products.service.HistorialPrecioService;
 import com.tpi_pais.mega_store.products.service.IProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ public class PutProductoController {
     private ResponseService responseService;
 
     @PutMapping("/producto")
-    public ResponseEntity<?> actualizar(@RequestBody ProductoDTO productoDTO) {
+    public ResponseEntity<?> actualizar(@RequestBody ProductoDTO productoDTO, @RequestHeader("Authorization") String token) {
         // Buscar el producto que se quiere modificar por su ID
         Producto productoModificar = productoService.buscarPorId(productoDTO.getId());
 
@@ -57,6 +58,8 @@ public class PutProductoController {
         if (productoDTO.getPrecio() != null) {
             productoService.verificarPrecio(productoDTO.getPrecio());
             productoModificar.setPrecio(productoDTO.getPrecio());
+            HistorialPrecioService historialPrecioService = new HistorialPrecioService();
+            historialPrecioService.crear(productoDTO.getPrecio().doubleValue(), productoModificar, token);
         }
 
         if (productoDTO.getPeso() != null) {

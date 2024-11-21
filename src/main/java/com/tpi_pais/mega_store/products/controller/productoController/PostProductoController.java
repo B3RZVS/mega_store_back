@@ -1,5 +1,6 @@
 package com.tpi_pais.mega_store.products.controller.productoController;
 
+import com.tpi_pais.mega_store.configs.SessionRequired;
 import com.tpi_pais.mega_store.exception.BadRequestException;
 import com.tpi_pais.mega_store.exception.ResponseService;
 import com.tpi_pais.mega_store.products.dto.ProductoDTO; // Asegúrate de tener este DTO
@@ -19,8 +20,9 @@ public class PostProductoController {
     @Autowired
     private ResponseService responseService; // Servicio para respuestas
 
+    @SessionRequired
     @PostMapping("/producto")
-    public ResponseEntity<?> guardar(@RequestBody ProductoDTO productoDTO) {
+    public ResponseEntity<?> guardar(@RequestBody ProductoDTO productoDTO, @RequestHeader(value = "Authorization") String token) {
         // Verificar atributos antes de proceder
         productoDTO = productoService.verificarAtributos(productoDTO);
 
@@ -37,6 +39,7 @@ public class PostProductoController {
             // Guardar nuevo producto
             System.out.println("casi me guardo");
             ProductoDTO productoGuardado = productoService.guardar(productoDTO);
+            //Una vez guardado genero el historial precio correspondiente
             return responseService.successResponse(productoGuardado, "Producto guardado");
         }
     }
