@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "historial_precios")
 @Data
-@ToString
 public class HistorialPrecio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

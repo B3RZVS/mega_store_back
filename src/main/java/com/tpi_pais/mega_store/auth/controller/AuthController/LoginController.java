@@ -40,8 +40,6 @@ public class LoginController {
         * */
         Sesion sesion = modelService.login(usuarioDTO);
         SesionMapper mapper = new SesionMapper();
-        SesionService service = new SesionService();
-        Rol rol = service.obtenerRol(sesion);
-        return responseService.successResponse(mapper.toDTO(sesion,rol), "Sesion creada");
+        return responseService.successResponse(mapper.toDTO(sesion,1), "Sesion creada");
     }
 }

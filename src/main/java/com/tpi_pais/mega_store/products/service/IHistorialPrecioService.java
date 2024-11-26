@@ -11,6 +11,8 @@ public interface IHistorialPrecioService {
 
     public HistorialPrecio crear(HistorialPrecioDTO modelDto, String token);
 
+    public void crear(Double precio, Producto producto,String token);
+
     public void verificarAtributos(HistorialPrecioDTO modelDto);
 
     public void verificarPrecio(Double precio);

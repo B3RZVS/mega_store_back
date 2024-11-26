@@ -68,8 +68,6 @@ public class ProductoService implements IProductoService {
 
     @Override
     public Producto guardar(Producto producto) {
-        MovimientoStockService movimientoStockService = new MovimientoStockService();
-        MovimientoStockDTO movimientoStockDTO = movimientoStockService.guardar(producto.getId(), producto.getStockActual(), false);
         return productoRepository.save(producto);
     }
 

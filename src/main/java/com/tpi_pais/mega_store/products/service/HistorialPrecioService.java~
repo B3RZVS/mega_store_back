@@ -12,11 +12,10 @@ import com.tpi_pais.mega_store.products.repository.HistorialPrecioRespository;
 import com.tpi_pais.mega_store.utils.StringUtils;
 import jakarta.persistence.Access;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-@Service
+
 public class HistorialPrecioService implements IHistorialPrecioService{
     @Autowired
     private HistorialPrecioRespository repository;
