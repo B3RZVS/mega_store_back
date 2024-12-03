@@ -2,7 +2,9 @@ package com.tpi_pais.mega_store.products.mapper;
 
 import com.tpi_pais.mega_store.products.dto.CategoriaDTO;
 import com.tpi_pais.mega_store.products.model.Categoria;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CategoriaMapper {
     public static CategoriaDTO toDTO(Categoria model) {
         CategoriaDTO dto = new CategoriaDTO();

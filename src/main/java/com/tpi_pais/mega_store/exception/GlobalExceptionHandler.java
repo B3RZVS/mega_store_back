@@ -86,7 +86,7 @@ public class GlobalExceptionHandler {
                 500,
                 "Error: Internal Server Error",
                 null,
-                "Ocurrió un error inesperado."
+                ex.getMessage()
         );
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }

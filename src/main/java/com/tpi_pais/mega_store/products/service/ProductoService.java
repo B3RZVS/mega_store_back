@@ -11,6 +11,7 @@ import com.tpi_pais.mega_store.exception.BadRequestException;
 import com.tpi_pais.mega_store.products.mapper.ProductoMapper;
 import com.tpi_pais.mega_store.utils.ExpresionesRegulares;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,18 +23,34 @@ import java.util.Optional;
 @Service
 public class ProductoService implements IProductoService {
 
-    @Autowired
-    private ProductoRepository productoRepository;
-    @Autowired
-    private CategoriaRepository categoriaRepository;
-    @Autowired
-    private SucursalRepository sucursalRepository;
-    @Autowired
-    private ColorRepository colorRepository;
-    @Autowired
-    private TalleRepository talleRepository;
-    @Autowired
-    private MarcaRepository marcaRepository;
+    private final ProductoRepository productoRepository;
+    private final CategoriaRepository categoriaRepository;
+    private final SucursalRepository sucursalRepository;
+    private final ColorRepository colorRepository;
+    private final TalleRepository talleRepository;
+    private final MarcaRepository marcaRepository;
+    private final MovimientoStockService movimientoStockService;
+
+    public ProductoService(
+            ProductoRepository productoRepository,
+            CategoriaRepository categoriaRepository,
+            SucursalRepository sucursalRepository,
+            ColorRepository colorRepository,
+            TalleRepository talleRepository,
+            MarcaRepository marcaRepository,
+            @Lazy MovimientoStockService movimientoStockService) {
+        this.productoRepository = productoRepository;
+        this.categoriaRepository = categoriaRepository;
+        this.sucursalRepository = sucursalRepository;
+        this.colorRepository = colorRepository;
+        this.talleRepository = talleRepository;
+        this.marcaRepository = marcaRepository;
+        this.movimientoStockService = movimientoStockService;
+    }
+
+
+
+
 
     @Override
     public List<ProductoDTO> listar() {
@@ -59,18 +76,48 @@ public class ProductoService implements IProductoService {
     }
 
     @Override
+    public ProductoDTO crear(ProductoDTO modelDTO) {
+        modelDTO = this.verificarAtributos(modelDTO);
+        if (productoExistente(modelDTO.getNombre())) {
+            Producto aux = buscarPorNombre(modelDTO.getNombre());
+            if (aux.esEliminado()) {
+                throw new BadRequestException("El producto ya estaba eliminado");
+                //recuperar(aux); // Recuperar si el producto estaba eliminado
+                //return ProductoMapper.toDTO(aux);
+            } else {
+                throw new BadRequestException("Ya existe un producto con ese nombre");
+            }
+        }else {
+            return guardar(modelDTO);
+        }
+    }
+
+    @Override
     public ProductoDTO guardar(ProductoDTO modelDTO) {
-        MovimientoStockService movimientoStockService = new MovimientoStockService();
-        MovimientoStockDTO movimientoStockDTO = movimientoStockService.guardar(modelDTO.getId(), modelDTO.getStockActual(), false);
-        Producto model = ProductoMapper.toEntity(modelDTO);
-        return ProductoMapper.toDTO(productoRepository.save(model));
+        Producto model = new Producto();
+        model.setNombre(modelDTO.getNombre());
+        model.setDescripcion(modelDTO.getDescripcion());
+        model.setPrecio(modelDTO.getPrecio());
+        model.setPeso(modelDTO.getPeso());
+        model.setStockActual(modelDTO.getStockActual());
+        model.setStockMinimo(modelDTO.getStockMinimo());
+        model.setStockMedio(modelDTO.getStockMedio());
+        model.setFoto(modelDTO.getFoto());
+        model.setCategoria(categoriaRepository.findById(modelDTO.getCategoriaId()).orElse(null));
+        model.setSucursal(sucursalRepository.findById(modelDTO.getSucursalId()).orElse(null));
+        model.setMarca(marcaRepository.findById(modelDTO.getMarcaId()).orElse(null));
+        model.setTalle(talleRepository.findById(modelDTO.getTalleId()).orElse(null));
+        model.setColor(colorRepository.findById(modelDTO.getColorId()).orElse(null));
+        ProductoDTO productoDTO = ProductoMapper.toDTO(productoRepository.save(model));
+        MovimientoStockDTO movimientoStockDTO = movimientoStockService.guardar(productoDTO.getId(), productoDTO.getStockActual(), false);
+        return productoDTO;
     }
 
     @Override
     public Producto guardar(Producto producto) {
-        MovimientoStockService movimientoStockService = new MovimientoStockService();
-        MovimientoStockDTO movimientoStockDTO = movimientoStockService.guardar(producto.getId(), producto.getStockActual(), false);
-        return productoRepository.save(producto);
+        Producto productoGuardado = productoRepository.save(producto);
+        MovimientoStockDTO movimientoStockDTO = movimientoStockService.guardar(productoGuardado.getId(), productoGuardado.getStockActual(), false);
+        return productoGuardado;
     }
 
     @Override
@@ -92,7 +139,7 @@ public class ProductoService implements IProductoService {
         verificarPrecio(productoDTO.getPrecio());
         verificarPeso(productoDTO.getPeso());
         verificarStock(productoDTO.getStockMedio(), productoDTO.getStockMinimo());
-        verificarFoto(productoDTO.getFoto());
+        //verificarFoto(productoDTO.getFoto());
         verificarCategoria(productoDTO.getCategoriaId());
         verificarSucursal(productoDTO.getSucursalId());
         verificarColor(productoDTO.getColorId());

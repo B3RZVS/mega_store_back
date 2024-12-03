@@ -18,8 +18,13 @@ import java.util.List;
 import java.util.Optional;
 @Service
 public class HistorialPrecioService implements IHistorialPrecioService{
-    @Autowired
-    private HistorialPrecioRespository repository;
+    private final HistorialPrecioRespository repository;
+    private final ProductoService productoService;
+
+    public HistorialPrecioService(HistorialPrecioRespository repository, ProductoService productoService){
+        this.repository = repository;
+        this.productoService = productoService;
+    }
 
     @Override
     public HistorialPrecio crear(HistorialPrecioDTO modelDto, String token){
@@ -66,8 +71,7 @@ public class HistorialPrecioService implements IHistorialPrecioService{
 
     @Override
     public Producto obtenerProducto(Integer productoId){
-        ProductoService productoService = new ProductoService();
-        return productoService.buscarPorId(productoId);
+        return this.productoService.buscarPorId(productoId);
     }
 
     @Override

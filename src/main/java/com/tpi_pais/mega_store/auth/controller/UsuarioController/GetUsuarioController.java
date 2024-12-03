@@ -10,13 +10,14 @@ import com.tpi_pais.mega_store.utils.ApiResponse;
 import com.tpi_pais.mega_store.utils.ExpresionesRegulares;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:5173")
+@RestController
+@RequestMapping("/auth")
 public class GetUsuarioController {
     @Autowired
     private IUsuarioService modelService;

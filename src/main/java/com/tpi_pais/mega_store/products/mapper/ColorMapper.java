@@ -2,7 +2,9 @@ package com.tpi_pais.mega_store.products.mapper;
 
 import com.tpi_pais.mega_store.products.dto.ColorDTO;
 import com.tpi_pais.mega_store.products.model.Color;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ColorMapper {
     public static ColorDTO toDTO(Color model) {
         ColorDTO dto = new ColorDTO();

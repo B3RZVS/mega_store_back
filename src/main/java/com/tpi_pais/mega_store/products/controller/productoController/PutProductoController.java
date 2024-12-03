@@ -2,13 +2,11 @@ package com.tpi_pais.mega_store.products.controller.productoController;
 
 import com.tpi_pais.mega_store.exception.BadRequestException;
 import com.tpi_pais.mega_store.exception.ResponseService;
-import com.tpi_pais.mega_store.products.dto.MarcaDTO;
 import com.tpi_pais.mega_store.products.dto.ProductoDTO;
 import com.tpi_pais.mega_store.products.model.*;
 import com.tpi_pais.mega_store.products.repository.*;
 import com.tpi_pais.mega_store.products.service.HistorialPrecioService;
 import com.tpi_pais.mega_store.products.service.IProductoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,22 +14,34 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/products")
 public class PutProductoController {
 
-    @Autowired
-    private IProductoService productoService;
+    private final IProductoService productoService;
+    private final CategoriaRepository categoriaRepository;
+    private final SucursalRepository sucursalRepository;
+    private final ColorRepository colorRepository;
+    private final TalleRepository talleRepository;
+    private final MarcaRepository marcaRepository;
+    private final ResponseService responseService;
+    private final HistorialPrecioService historialPrecioService;
 
-    @Autowired
-    private CategoriaRepository categoriaRepository;
-    @Autowired
-    private SucursalRepository sucursalRepository;
-    @Autowired
-    private ColorRepository colorRepository;
-    @Autowired
-    private TalleRepository talleRepository;
-    @Autowired
-    private MarcaRepository marcaRepository;
+    public PutProductoController(
+            IProductoService productoService,
+            CategoriaRepository categoriaRepository,
+            SucursalRepository sucursalRepository,
+            ColorRepository colorRepository,
+            TalleRepository talleRepository,
+            MarcaRepository marcaRepository,
+            ResponseService responseService,
+            HistorialPrecioService historialPrecioService) {
+        this.productoService = productoService;
+        this.categoriaRepository = categoriaRepository;
+        this.sucursalRepository = sucursalRepository;
+        this.colorRepository = colorRepository;
+        this.talleRepository = talleRepository;
+        this.marcaRepository = marcaRepository;
+        this.responseService = responseService;
+        this.historialPrecioService = historialPrecioService;
+    }
 
-    @Autowired
-    private ResponseService responseService;
 
     @PutMapping("/producto")
     public ResponseEntity<?> actualizar(@RequestBody ProductoDTO productoDTO, @RequestHeader("Authorization") String token) {
@@ -58,8 +68,7 @@ public class PutProductoController {
         if (productoDTO.getPrecio() != null) {
             productoService.verificarPrecio(productoDTO.getPrecio());
             productoModificar.setPrecio(productoDTO.getPrecio());
-            HistorialPrecioService historialPrecioService = new HistorialPrecioService();
-            historialPrecioService.crear(productoDTO.getPrecio().doubleValue(), productoModificar, token);
+            this.historialPrecioService.crear(productoDTO.getPrecio().doubleValue(), productoModificar, token);
         }
 
         if (productoDTO.getPeso() != null) {

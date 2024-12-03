@@ -91,8 +91,11 @@ public class MovimientoStockService implements IMovimientoStockService {
     };
 
     @Override
-    public void verificarCantidad(Integer cantidad, Boolean esEgreso, Producto producto){
-        
+    public void verificarCantidad(Integer cantidad, Boolean esEgreso, Producto producto, Boolean primeraVez){
+        if (cantidad <= 0 && !primeraVez){
+            throw new BadRequestException("La cantidad debe ser mayor a 0.");
+        }
+
         if (esEgreso){
             if (cantidad > producto.getStockActual()){
                 throw new BadRequestException("No hay suficiente stock para realizar la salida.");

@@ -2,7 +2,9 @@ package com.tpi_pais.mega_store.products.mapper;
 
 import com.tpi_pais.mega_store.products.dto.ProductoDTO;
 import com.tpi_pais.mega_store.products.model.*;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ProductoMapper {
     public static ProductoDTO toDTO(Producto model) {
         ProductoDTO dto = new ProductoDTO();

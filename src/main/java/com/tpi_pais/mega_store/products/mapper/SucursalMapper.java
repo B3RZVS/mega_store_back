@@ -2,7 +2,9 @@ package com.tpi_pais.mega_store.products.mapper;
 
 import com.tpi_pais.mega_store.products.dto.SucursalDTO;
 import com.tpi_pais.mega_store.products.model.Sucursal;
+import org.springframework.stereotype.Component;
 
+@Component
 public class SucursalMapper {
     public static SucursalDTO toDTO(Sucursal model) {
         SucursalDTO dto = new SucursalDTO();

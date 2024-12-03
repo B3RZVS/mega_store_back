@@ -16,6 +16,8 @@ public interface IProductoService {
 
     Producto buscarEliminadoPorId(Integer id); // Busca producto eliminado por ID
 
+    ProductoDTO crear (ProductoDTO productoDTO);
+
     ProductoDTO guardar(ProductoDTO productoDTO); // Guarda producto nuevo o recupera un eliminado
 
     Producto guardar(Producto producto); // Guarda producto sin DTO

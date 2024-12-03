@@ -1,8 +1,6 @@
 package com.tpi_pais.mega_store.products.dto;
 import com.tpi_pais.mega_store.utils.StringUtils;
 import lombok.Data;
-import lombok.Getter;
-
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
 
@@ -10,7 +8,6 @@ import java.math.BigDecimal;
 public class ProductoDTO {
     private Integer id;
     private String nombre;
-    @Getter
     private LocalDateTime fechaEliminacion;
     private BigDecimal precio;
     private BigDecimal peso;

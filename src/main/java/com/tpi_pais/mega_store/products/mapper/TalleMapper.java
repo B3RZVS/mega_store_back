@@ -2,7 +2,9 @@ package com.tpi_pais.mega_store.products.mapper;
 
 import com.tpi_pais.mega_store.products.dto.TalleDTO;
 import com.tpi_pais.mega_store.products.model.Talle;
+import org.springframework.stereotype.Component;
 
+@Component
 public class TalleMapper {
     public static TalleDTO toDTO(Talle model) {
         TalleDTO dto = new TalleDTO();
