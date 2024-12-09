@@ -5,6 +5,7 @@ import com.tpi_pais.mega_store.exception.ResponseService;
 import com.tpi_pais.mega_store.products.dto.MarcaDTO;
 import com.tpi_pais.mega_store.products.model.Marca;
 import com.tpi_pais.mega_store.products.service.IMarcaService;
+import com.tpi_pais.mega_store.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,13 +13,18 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/products")
 public class PostMarcaController {
-    @Autowired
-    private IMarcaService modelService;
-    @Autowired
-    private ResponseService responseService;
+
+    private final IMarcaService modelService;
+
+    private final ResponseService responseService;
+
+    public PostMarcaController(IMarcaService modelService, ResponseService responseService) {
+        this.modelService = modelService;
+        this.responseService = responseService;
+    }
 
     @PostMapping("/marca")
-    public ResponseEntity<?> guardar(@RequestBody MarcaDTO model){
+    public ResponseEntity<ApiResponse<Object>>  guardar(@RequestBody MarcaDTO model){
         model = modelService.verificarAtributos(model);
         if (modelService.marcaExistente(model.getNombre())){
             Marca aux = modelService.buscarPorNombre(model.getNombre());

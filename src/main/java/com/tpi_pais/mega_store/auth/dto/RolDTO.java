@@ -12,14 +12,22 @@ public class RolDTO {
     private String nombre;
     private LocalDateTime fechaEliminacion;
 
-    public boolean noTieneNombre (){
-        return this.getNombre() == null || this.getNombre() == "";
+    /**
+     * Verifica si el atributo 'nombre' del rol está vacío o es nulo.
+     *
+     * @return true si el nombre es nulo o vacío, false en caso contrario.
+     */
+    public boolean noTieneNombre () {
+        return this.getNombre() == null || this.getNombre().isEmpty();
     }
 
-    public void capitalizarNombre (){
+    /**
+     * Capitaliza el nombre del rol utilizando el método de utilidad StringUtils.
+     * Este método transforma el nombre del rol a formato capitalizado (cada palabra con la primera letra en mayúscula).
+     */
+    public void capitalizarNombre () {
         StringUtils stringUtils = new StringUtils();
 
         this.setNombre(stringUtils.capitalizeWords(this.getNombre()));
     }
-
 }

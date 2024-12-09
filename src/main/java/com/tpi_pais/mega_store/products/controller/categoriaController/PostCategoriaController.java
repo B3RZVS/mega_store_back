@@ -2,6 +2,7 @@ package com.tpi_pais.mega_store.products.controller.categoriaController;
 
 import com.tpi_pais.mega_store.exception.BadRequestException;
 import com.tpi_pais.mega_store.exception.ResponseService;
+import com.tpi_pais.mega_store.utils.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import com.tpi_pais.mega_store.products.dto.CategoriaDTO;
 import com.tpi_pais.mega_store.products.model.Categoria;
@@ -12,13 +13,18 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/products")
 public class PostCategoriaController {
-    @Autowired
-    private ICategoriaService modelService;
-    @Autowired
-    private ResponseService responseService;
+
+    private final ICategoriaService modelService;
+
+    private final ResponseService responseService;
+
+    public PostCategoriaController(ICategoriaService modelService, ResponseService responseService) {
+        this.modelService = modelService;
+        this.responseService = responseService;
+    }
 
     @PostMapping("/categoria")
-    public ResponseEntity<?> guardar(@RequestBody CategoriaDTO model){
+    public ResponseEntity<ApiResponse<Object>>  guardar(@RequestBody CategoriaDTO model){
         model = modelService.verificarAtributos(model);
         if (modelService.categoriaExistente(model.getNombre())){
             Categoria aux = modelService.buscarPorNombre(model.getNombre());
@@ -29,8 +35,7 @@ public class PostCategoriaController {
                 throw new BadRequestException("Ya existe una categoria con ese nombre");
             }
         } else {
-            CategoriaDTO modelGuardado = modelService.guardar(model);
-            return responseService.successResponse(modelGuardado, "Categoria guardada");
+            return responseService.successResponse(modelService.guardar(model), "Categoria guardada");
         }
     }
 }

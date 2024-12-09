@@ -8,6 +8,7 @@ import com.tpi_pais.mega_store.products.dto.HistorialPrecioDTO;
 import com.tpi_pais.mega_store.products.mapper.HistorialPrecioMapper;
 import com.tpi_pais.mega_store.products.model.HistorialPrecio;
 import com.tpi_pais.mega_store.products.service.IHistorialPrecioService;
+import com.tpi_pais.mega_store.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,28 +21,31 @@ import java.util.List;
 @RestController
 @RequestMapping("/products")
 public class GetHistorialPrecioController {
-    @Autowired
-    private IHistorialPrecioService modelService;
-    @Autowired
-    private ResponseService responseService;
+
+    private final IHistorialPrecioService modelService;
+
+    private final ResponseService responseService;
+
+    public GetHistorialPrecioController(IHistorialPrecioService modelService, ResponseService responseService) {
+        this.modelService = modelService;
+        this.responseService = responseService;
+    }
 
     @SessionRequired
     @GetMapping({"/historial-precio/{id}"})
-    public ResponseEntity<?> getActual(@PathVariable Integer id) {
-        HistorialPrecio actual = modelService.obtenerActual(id);
-        HistorialPrecioMapper mapper = new HistorialPrecioMapper();
-        return responseService.successResponse(mapper.toDTO(actual), "OK");
+    public ResponseEntity<ApiResponse<Object>>  getActual(@PathVariable Integer id) {
+        return responseService.successResponse(HistorialPrecioMapper.toDTO(modelService.obtenerActual(id)), "OK");
     }
 
     @SessionRequired
     @GetMapping({"/historiales-precio/producto/{id}"})
-    public ResponseEntity<?> getAllForProducto(@PathVariable Integer id) {
+    public ResponseEntity<ApiResponse<Object>>  getAllForProducto(@PathVariable Integer id) {
         return responseService.successResponse(modelService.listarPorProducto(id), "OK");
     }
 
     @SessionRequired
     @GetMapping({"/historiales-precio/usuario/{id}"})
-    public ResponseEntity<?> getAllForUsuario(@PathVariable Integer id) {
+    public ResponseEntity<ApiResponse<Object>>  getAllForUsuario(@PathVariable Integer id) {
         return responseService.successResponse(modelService.listarPorUsuario(id), "OK");
     }
 }

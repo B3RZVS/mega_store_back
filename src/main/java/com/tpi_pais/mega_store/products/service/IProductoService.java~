@@ -41,7 +41,10 @@ public interface IProductoService {
     void verificarPeso(BigDecimal peso); // Verifica que el peso sea mayor que 0
 
     void verificarStock(Integer stockMedio, Integer stockMinimo); // Verifica valores de stock mínimo y medio
-    
+
+
+    void verificarFoto(String nombreFoto); // Valida el formato de la foto
+
     void verificarCategoria(Integer categoriaId); // Verifica existencia de la categoría
 
     void verificarSucursal(Integer sucursalId); // Verifica existencia de la sucursal

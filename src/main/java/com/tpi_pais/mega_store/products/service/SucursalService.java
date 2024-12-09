@@ -17,8 +17,12 @@ import java.util.Optional;
 
 @Service
 public class SucursalService implements ISucursalService {
-    @Autowired
-    private SucursalRepository modelRepository;
+
+    private final SucursalRepository modelRepository;
+
+    public SucursalService(SucursalRepository modelRepository) {
+        this.modelRepository = modelRepository;
+    }
 
     @Override
     public List<SucursalDTO> listar() {

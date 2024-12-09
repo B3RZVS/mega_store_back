@@ -1,6 +1,7 @@
 package com.tpi_pais.mega_store.products.service;
 
 import com.tpi_pais.mega_store.exception.BadRequestException;
+import com.tpi_pais.mega_store.exception.MessagesException;
 import com.tpi_pais.mega_store.exception.NotFoundException;
 import com.tpi_pais.mega_store.products.dto.ColorDTO;
 import com.tpi_pais.mega_store.products.mapper.ColorMapper;
@@ -17,8 +18,15 @@ import java.util.Optional;
 
 @Service
 public class ColorService implements IColorService{
-    @Autowired
-    private ColorRepository modelRepository;
+
+    private final ColorRepository modelRepository;
+
+    private final ExpresionesRegulares expresionesRegulares;
+
+    public ColorService(ColorRepository modelRepository, ExpresionesRegulares expresionesRegulares) {
+        this.modelRepository = modelRepository;
+        this.expresionesRegulares = expresionesRegulares;
+    }
 
     @Override
     public List<ColorDTO> listar() {
@@ -30,7 +38,7 @@ public class ColorService implements IColorService{
     public Color buscarPorId(Integer id) {
         Optional<Color> model = modelRepository.findByIdAndFechaEliminacionIsNull(id);
         if (model.isEmpty()) {
-            throw new NotFoundException("El color con id " + id + " no existe o se encuentra eliminada.");
+            throw new NotFoundException(MessagesException.OBJECTO_NO_ENCONTRADO);
         }
         return model.get();
     }
@@ -39,7 +47,7 @@ public class ColorService implements IColorService{
     public Color buscarEliminadoPorId(Integer id) {
         Optional<Color> model = modelRepository.findByIdAndFechaEliminacionIsNotNull(id);
         if (model.isEmpty()) {
-            throw new NotFoundException("El color con id " + id + " no existe o no se encuentra eliminda.");
+            throw new NotFoundException(MessagesException.OBJECTO_NO_ENCONTRADO);
         }
         return model.get();
     }
@@ -75,14 +83,14 @@ public class ColorService implements IColorService{
     @Override
     public ColorDTO verificarAtributos (ColorDTO colorDTO) {
         if (colorDTO.noTieneNombre()) {
-            throw new BadRequestException("El color no tiene nombre");
+            throw new BadRequestException(MessagesException.CAMPO_NO_ENVIADO+"nombre");
         }
-        ExpresionesRegulares expReg = new ExpresionesRegulares();
-        if (!expReg.verificarCaracteres(colorDTO.getNombre())){
+
+        if (!expresionesRegulares.verificarCaracteres(colorDTO.getNombre())){
             throw new BadRequestException("El nombre enviado contiene caracteres no permitidos.");
         }
-        if (!expReg.verificarTextoConEspacios(colorDTO.getNombre())){
-            colorDTO.setNombre(expReg.corregirCadena(colorDTO.getNombre()));
+        if (!expresionesRegulares.verificarTextoConEspacios(colorDTO.getNombre())){
+            colorDTO.setNombre(expresionesRegulares.corregirCadena(colorDTO.getNombre()));
             if (Objects.equals(colorDTO.getNombre(), "")){
                 throw new BadRequestException("El nombre tiene un formato incorrecto");
             }

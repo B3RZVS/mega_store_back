@@ -19,8 +19,11 @@ import java.util.Optional;
 @Service
 public class MarcaService implements IMarcaService {
 
-    @Autowired
-    private MarcaRepository modelRepository;
+    private final MarcaRepository modelRepository;
+
+    public MarcaService(MarcaRepository modelRepository) {
+        this.modelRepository = modelRepository;
+    }
 
     @Override
     public List<MarcaDTO> listar() {

@@ -1,6 +1,7 @@
 package com.tpi_pais.mega_store.products.service;
 
 import com.tpi_pais.mega_store.exception.BadRequestException;
+import com.tpi_pais.mega_store.exception.MessagesException;
 import com.tpi_pais.mega_store.exception.NotFoundException;
 import com.tpi_pais.mega_store.products.dto.TalleDTO;
 import com.tpi_pais.mega_store.products.dto.TalleDTO;
@@ -19,8 +20,11 @@ import java.util.Optional;
 @Service
 public class TalleService implements ITalleService {
 
-    @Autowired
-    private TalleRepository modelRepository;
+    private final TalleRepository modelRepository;
+
+    public TalleService(TalleRepository modelRepository) {
+        this.modelRepository = modelRepository;
+    }
 
     @Override
     public List<TalleDTO> listar() {
@@ -32,7 +36,7 @@ public class TalleService implements ITalleService {
     public Talle buscarPorId(Integer id) {
         Optional<Talle> model = modelRepository.findByIdAndFechaEliminacionIsNull(id);
         if (model.isEmpty()) {
-            throw new NotFoundException("El talle con id " + id + " no existe o se encuentra eliminada.");
+            throw new NotFoundException(MessagesException.OBJECTO_NO_ENCONTRADO);
         }
         return model.get();
     }
@@ -41,7 +45,7 @@ public class TalleService implements ITalleService {
     public Talle buscarEliminadoPorId(Integer id) {
         Optional<Talle> model = modelRepository.findByIdAndFechaEliminacionIsNotNull(id);
         if (model.isEmpty()) {
-            throw new NotFoundException("El talle con id " + id + " no existe o no se encuentra eliminda.");
+            throw new NotFoundException(MessagesException.OBJECTO_NO_ENCONTRADO);
         }
         return model.get();
     }
@@ -77,16 +81,16 @@ public class TalleService implements ITalleService {
     @Override
     public TalleDTO verificarAtributos (TalleDTO talleDTO) {
         if (talleDTO.noTieneNombre()) {
-            throw new BadRequestException("El talle no tiene nombre");
+            throw new BadRequestException(MessagesException.CAMPO_NO_ENVIADO+"nombre");
         }
         ExpresionesRegulares expReg = new ExpresionesRegulares();
         if (!expReg.verificarCaracteres(talleDTO.getNombre())){
-            throw new BadRequestException("El nombre enviado contiene caracteres no permitidos.");
+            throw new BadRequestException(MessagesException.CARACTERES_INVALIDOS+"nombre");
         }
         if (!expReg.verificarTextoConEspacios(talleDTO.getNombre())){
             talleDTO.setNombre(expReg.corregirCadena(talleDTO.getNombre()));
             if (Objects.equals(talleDTO.getNombre(), "")){
-                throw new BadRequestException("El nombre tiene un formato incorrecto");
+                throw new BadRequestException(MessagesException.FORMATO_INVALIDO+"nombre");
             }
         }
         talleDTO.capitalizarNombre();

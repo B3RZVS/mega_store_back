@@ -4,6 +4,7 @@ import com.tpi_pais.mega_store.auth.model.Sesion;
 import com.tpi_pais.mega_store.auth.model.Usuario;
 import com.tpi_pais.mega_store.auth.service.SesionService;
 import com.tpi_pais.mega_store.exception.BadRequestException;
+import com.tpi_pais.mega_store.exception.MessagesException;
 import com.tpi_pais.mega_store.exception.NotFoundException;
 import com.tpi_pais.mega_store.products.dto.HistorialPrecioDTO;
 import com.tpi_pais.mega_store.products.model.HistorialPrecio;
@@ -20,10 +21,12 @@ import java.util.Optional;
 public class HistorialPrecioService implements IHistorialPrecioService{
     private final HistorialPrecioRespository repository;
     private final ProductoService productoService;
+    private final SesionService sesionService;
 
-    public HistorialPrecioService(HistorialPrecioRespository repository, ProductoService productoService){
+    public HistorialPrecioService(HistorialPrecioRespository repository, ProductoService productoService, SesionService sesionService) {
         this.repository = repository;
         this.productoService = productoService;
+        this.sesionService = sesionService;
     }
 
     @Override
@@ -58,13 +61,12 @@ public class HistorialPrecioService implements IHistorialPrecioService{
     @Override
     public void verificarPrecio(Double precio){
         if (precio == null || precio.compareTo(0.01) < 0){
-            throw new BadRequestException("El precio debe ser mayor que 0.");
+            throw new BadRequestException(MessagesException.CAMPO_NUMERICO_MAYOR_0+"precio");
         }
     };
 
     @Override
     public Usuario obtenerUsuario(String token){
-        SesionService sesionService = new SesionService();
         Sesion sesion = sesionService.obtenerSesionPorToken(token);
         return sesion.getUsuario();
     }
@@ -78,7 +80,7 @@ public class HistorialPrecioService implements IHistorialPrecioService{
     public HistorialPrecio obtenerActual (Integer productoId){
         Optional<HistorialPrecio> model = this.repository.findFirstByProductoIdOrderByFechaDesc(productoId);
         if (model.isEmpty()){
-            throw new NotFoundException("El producto con id " + productoId + " no tiene historial de precios.");
+            throw new NotFoundException(MessagesException.OBJECTO_NO_ENCONTRADO);
         } else {
             return model.get();
         }
@@ -88,7 +90,7 @@ public class HistorialPrecioService implements IHistorialPrecioService{
     public List<HistorialPrecioDTO> listarPorProducto(Integer productoId){
         List<HistorialPrecio> models = this.repository.findByProductoIdOrderByFechaDesc(productoId);
         if (models.isEmpty()){
-            throw new NotFoundException("El producto con id " + productoId + " no tiene historial de precios.");
+            throw new NotFoundException(MessagesException.OBJECTO_NO_ENCONTRADO);
         }
         return models.stream().map(model -> new HistorialPrecioDTO(model.getId(), model.getPrecio(), model.getFecha(), model.getUsuario().getId(), model.getProducto().getId())).toList();
     };
@@ -97,7 +99,7 @@ public class HistorialPrecioService implements IHistorialPrecioService{
     public List<HistorialPrecioDTO> listarPorUsuario(Integer usuarioId){
         List<HistorialPrecio> models = this.repository.findByUsuarioIdOrderByFechaDesc(usuarioId);
         if (models.isEmpty()){
-            throw new NotFoundException("El usuario con id " + usuarioId + " no tiene historial de precios creados.");
+            throw new NotFoundException(MessagesException.OBJECTO_NO_ENCONTRADO);
         }
         return models.stream().map(model -> new HistorialPrecioDTO(model.getId(), model.getPrecio(), model.getFecha(), model.getUsuario().getId(), model.getProducto().getId())).toList();
     };

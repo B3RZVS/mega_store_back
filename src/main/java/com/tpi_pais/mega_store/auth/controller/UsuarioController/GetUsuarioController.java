@@ -19,14 +19,18 @@ import java.util.List;
 @RestController
 @RequestMapping("/auth")
 public class GetUsuarioController {
-    @Autowired
-    private IUsuarioService modelService;
 
-    @Autowired
-    private ResponseService responseService;
+    private final IUsuarioService modelService;
+
+    private final ResponseService responseService;
+
+    public GetUsuarioController(IUsuarioService modelService, ResponseService responseService) {
+        this.modelService = modelService;
+        this.responseService = responseService;
+    }
 
     @GetMapping({"/usuarios"})
-    public ResponseEntity<?> getAll() {
+    public ResponseEntity<ApiResponse<Object>>  getAll() {
         List<UsuarioDTO> usuarios = modelService.listar();
         if (usuarios.isEmpty()) {
             throw new BadRequestException("No hay usuarios creados");
@@ -35,7 +39,7 @@ public class GetUsuarioController {
     }
 
     @GetMapping("/usuario/id/{id}")
-    public ResponseEntity<?> getPorId(@PathVariable Integer id){
+    public ResponseEntity<ApiResponse<Object>>  getPorId(@PathVariable Integer id){
         /*
          * Validaciones:
          * 1) Que el id se haya enviado.
@@ -49,13 +53,12 @@ public class GetUsuarioController {
          * En caso de que pase todas las verificacioens devuelve el recurso encontrado.
          * */
         Usuario model = modelService.buscarPorId(id);
-        UsuarioDTO modelDTO = UsuarioMapper.toDTO(model);
-        return responseService.successResponse(modelDTO, "OK");
+        return responseService.successResponse(UsuarioMapper.toDTO(model), "OK");
 
     }
 
     @GetMapping("/usuario/email/{email}")
-    public ResponseEntity<?> getPorEmail(@PathVariable String email){
+    public ResponseEntity<ApiResponse<Object>>  getPorEmail(@PathVariable String email){
         /*
          * Validaciones:
          * 1) Que el id se haya enviado.
@@ -70,8 +73,7 @@ public class GetUsuarioController {
          * */
         modelService.verificarEmail(email);
         Usuario model = modelService.buscarPorEmail(email);
-        UsuarioDTO modelDTO = UsuarioMapper.toDTO(model);
-        return responseService.successResponse(modelDTO, "OK");
+        return responseService.successResponse(UsuarioMapper.toDTO(model), "OK");
     }
 
 }

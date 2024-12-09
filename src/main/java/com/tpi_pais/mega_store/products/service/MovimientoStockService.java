@@ -1,6 +1,7 @@
 package com.tpi_pais.mega_store.products.service;
 
 import com.tpi_pais.mega_store.exception.BadRequestException;
+import com.tpi_pais.mega_store.exception.MessagesException;
 import com.tpi_pais.mega_store.exception.NotFoundException;
 import com.tpi_pais.mega_store.products.dto.MovimientoStockDTO;
 import com.tpi_pais.mega_store.products.mapper.MovimientoStockMapper;
@@ -55,7 +56,7 @@ public class MovimientoStockService implements IMovimientoStockService {
         Producto producto = productoService.buscarPorId(productoId);
         List<MovimientoStock> models = repository.findByProductoIdOrderByFechaCreacionDesc(producto.getId());
         if (models.isEmpty()){
-            throw new NotFoundException("El producto con id " + productoId + " no tiene movimientos de stock.");
+            throw new NotFoundException(MessagesException.OBJECTO_NO_ENCONTRADO);
         }
         return models.stream().map(this.movimientoStockMapper::toDTO).toList();
     };
@@ -92,11 +93,12 @@ public class MovimientoStockService implements IMovimientoStockService {
 
     @Override
     public void verificarCantidad(Integer cantidad, Boolean esEgreso, Producto producto){
-        
-        if (esEgreso){
+        if (esEgreso != null && esEgreso){
             if (cantidad > producto.getStockActual()){
-                throw new BadRequestException("No hay suficiente stock para realizar la salida.");
+                throw new BadRequestException(MessagesException.STOCK_INSUFICIENTE);
             }
+        }else {
+            throw new BadRequestException("El campo esEgreso es obligatorio.");
         }
     };
 }

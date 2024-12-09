@@ -12,8 +12,15 @@ import java.util.Optional;
 
 @Service
 public class SesionService  implements ISesionService {
-    @Autowired
+
     private SesionRepository sesionRepository;
+
+    private final IRolService rolService;
+
+    public SesionService(SesionRepository sesionRepository, IRolService rolService) {
+        this.sesionRepository = sesionRepository;
+        this.rolService = rolService;
+    }
 
     @Override
     public Sesion obtenerSesionPorToken(String token) {
@@ -64,7 +71,6 @@ public class SesionService  implements ISesionService {
         if (rol != null) {
             return rol;
         }else {
-            RolService rolService = new RolService();
             return rolService.buscarPorId(4);
         }
     }

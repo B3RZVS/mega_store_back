@@ -6,6 +6,7 @@ import com.tpi_pais.mega_store.products.dto.MarcaDTO;
 import com.tpi_pais.mega_store.products.mapper.MarcaMapper;
 import com.tpi_pais.mega_store.products.model.Marca;
 import com.tpi_pais.mega_store.products.service.IMarcaService;
+import com.tpi_pais.mega_store.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,12 +15,18 @@ import java.util.List;
 @RestController
 @RequestMapping("/products")
 public class GetMarcaController {
-    @Autowired
-    private IMarcaService modelService;
-    @Autowired
-    private ResponseService responseService;
+
+    private final IMarcaService modelService;
+
+    private final ResponseService responseService;
+
+    public GetMarcaController(IMarcaService modelService, ResponseService responseService) {
+        this.modelService = modelService;
+        this.responseService = responseService;
+    }
+
     @GetMapping({"/marcas"})
-    public ResponseEntity<?> getAll() {
+    public ResponseEntity<ApiResponse<Object>>  getAll() {
         List<MarcaDTO> marcas = modelService.listar();
         if (marcas.isEmpty()) {
             throw new BadRequestException("No hay marcas creadas");
@@ -28,9 +35,7 @@ public class GetMarcaController {
     }
 
     @GetMapping("/marca/{id}")
-    public ResponseEntity<?> getPorId(@PathVariable Integer id){
-        Marca model = modelService.buscarPorId(id);
-        MarcaDTO modelDTO = MarcaMapper.toDTO(model);
-        return responseService.successResponse(modelDTO, "OK");
+    public ResponseEntity<ApiResponse<Object>>  getPorId(@PathVariable Integer id){
+        return responseService.successResponse(MarcaMapper.toDTO(modelService.buscarPorId(id)), "OK");
     }
 }
