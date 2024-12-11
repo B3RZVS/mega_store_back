@@ -2,6 +2,8 @@ package com.tpi_pais.mega_store.products.dto;
 
 import com.tpi_pais.mega_store.utils.StringUtils;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
 
@@ -29,6 +31,8 @@ public class ProductoDTO {
     private Integer marcaId; // Identificador de la marca del producto.
     private Integer talleId; // Identificador del talle del producto (si aplica).
     private Integer colorId; // Identificador del color del producto (si aplica).
+
+    private MultipartFile imagen;
 
     /**
      * Método para verificar si el nombre del producto está vacío o es nulo.

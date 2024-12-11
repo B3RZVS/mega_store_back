@@ -20,11 +20,12 @@ import java.math.BigDecimal;
 public class PostProductoController {
 
     // Inyección de dependencias a través del constructor
-
+    private final ImageBBService imgBBService;
     private final IProductoService productoService; // Servicio para manejar productos
     private final ResponseService responseService; // Servicio para manejar respuestas
 
-    public PostProductoController(IProductoService productoService, ResponseService responseService) {
+    public PostProductoController(ImageBBService imgBBService, IProductoService productoService, ResponseService responseService) {
+        this.imgBBService = imgBBService;
         this.productoService = productoService;
         this.responseService = responseService;
     }
@@ -50,10 +51,18 @@ public class PostProductoController {
         ProductoDTO productoDTO = new ProductoDTO();
         productoDTO.setNombre(nombre);
         productoDTO.setDescripcion(descripcion);
-        productoDTO.setImagen(imagen);
 
         // Subir la imagen a ImageBB
+        try {
 
+            String imageUrl = imgBBService.subirImagen(imagen); // Usamos el servicio para subir la imagen
+            if (imageUrl == null) {
+                throw new BadRequestException("Error al subir la imagen.");
+            }
+            productoDTO.setFoto(imageUrl); // Establecemos la URL de la imagen
+        } catch (Exception e) {
+            throw new BadRequestException("Error al subir la imagen: " + e.getMessage());
+        }
 
         // Establecer valores numéricos con validación
         try {
@@ -78,6 +87,20 @@ public class PostProductoController {
                 productoService.crear(productoDTO), // Crear el producto utilizando el servicio
                 "Producto creado exitosamente" // Mensaje de éxito
         );
+    }
+
+    // Endpoint adicional para subir una imagen
+    @PostMapping("/imagen")
+    public ResponseEntity<ApiResponse<Object>> guardarImagen(@RequestPart("foto") MultipartFile foto) throws BadRequestException {
+        try {
+            // Subir la imagen y obtener la URL
+            String imageUrl = imgBBService.subirImagen(foto);
+            // Retornar la respuesta con la URL de la imagen
+            return responseService.successResponse(imageUrl, "Imagen subida exitosamente");
+        } catch (Exception e) {
+            // Si ocurre un error, devolver el mensaje de error
+            return responseService.successResponse(e.getMessage());
+        }
     }
 }
 

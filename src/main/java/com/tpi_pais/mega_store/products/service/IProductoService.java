@@ -3,6 +3,7 @@ package com.tpi_pais.mega_store.products.service;
 import com.tpi_pais.mega_store.products.model.Marca;
 import com.tpi_pais.mega_store.products.model.Producto;
 import com.tpi_pais.mega_store.products.dto.ProductoDTO;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -51,4 +52,6 @@ public interface IProductoService {
     void verificarTalle(Integer talleId); // Verifica existencia del talle
 
     void verificarMarca(Integer marcaId);
+
+    void verificarImagen(MultipartFile imagen);
 }

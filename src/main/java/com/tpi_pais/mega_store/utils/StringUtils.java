@@ -17,7 +17,7 @@ public class StringUtils {
      * @param input Cadena a capitalizar.
      * @return Cadena con las palabras capitalizadas o la cadena original si está vacía o nula.
      */
-    public String capitalizeWords(String input) {
+    public static String capitalizeWords(String input) {
         if (input == null || input.isEmpty()) {
             return input;
         }

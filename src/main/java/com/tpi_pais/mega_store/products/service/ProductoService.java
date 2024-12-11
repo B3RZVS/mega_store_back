@@ -1,5 +1,6 @@
 package com.tpi_pais.mega_store.products.service;
 
+import com.tpi_pais.mega_store.configs.ImageBBService;
 import com.tpi_pais.mega_store.exception.MessagesException;
 import com.tpi_pais.mega_store.products.dto.MovimientoStockDTO;
 import com.tpi_pais.mega_store.products.mapper.MarcaMapper;
@@ -11,12 +12,14 @@ import com.tpi_pais.mega_store.exception.NotFoundException;
 import com.tpi_pais.mega_store.exception.BadRequestException;
 import com.tpi_pais.mega_store.products.mapper.ProductoMapper;
 import com.tpi_pais.mega_store.utils.ExpresionesRegulares;
+import com.tpi_pais.mega_store.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -31,6 +34,11 @@ public class ProductoService implements IProductoService {
     private final TalleRepository talleRepository;
     private final MarcaRepository marcaRepository;
     private final MovimientoStockService movimientoStockService;
+    private final ImageBBService imgBBService;
+
+    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
+    private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png");
+
 
     public ProductoService(
             ProductoRepository productoRepository,
@@ -39,7 +47,8 @@ public class ProductoService implements IProductoService {
             ColorRepository colorRepository,
             TalleRepository talleRepository,
             MarcaRepository marcaRepository,
-            @Lazy MovimientoStockService movimientoStockService) {
+            @Lazy MovimientoStockService movimientoStockService,
+            ImageBBService imgBBService) {
         this.productoRepository = productoRepository;
         this.categoriaRepository = categoriaRepository;
         this.sucursalRepository = sucursalRepository;
@@ -47,6 +56,7 @@ public class ProductoService implements IProductoService {
         this.talleRepository = talleRepository;
         this.marcaRepository = marcaRepository;
         this.movimientoStockService = movimientoStockService;
+        this.imgBBService = imgBBService;
     }
 
 
@@ -79,6 +89,7 @@ public class ProductoService implements IProductoService {
     @Override
     public ProductoDTO crear(ProductoDTO modelDTO) {
         modelDTO = this.verificarAtributos(modelDTO);
+        modelDTO.setFoto(subirImagen(modelDTO.getImagen()));
         if (productoExistente(modelDTO.getNombre())) {
             Producto aux = buscarPorNombre(modelDTO.getNombre());
             if (aux.esEliminado()) {
@@ -90,6 +101,18 @@ public class ProductoService implements IProductoService {
             }
         }else {
             return guardar(modelDTO);
+        }
+    }
+
+    public String subirImagen (MultipartFile imagen) {
+        try {
+            String imageUrl = imgBBService.subirImagen(imagen); // Usamos el servicio para subir la imagen
+            if (imageUrl == null) {
+                throw new BadRequestException("Error al subir la imagen.");
+            }
+            return imageUrl;
+        } catch (Exception e) {
+            throw new BadRequestException("Error al subir la imagen: " + e.getMessage());
         }
     }
 
@@ -136,11 +159,12 @@ public class ProductoService implements IProductoService {
     @Override
     public ProductoDTO verificarAtributos(ProductoDTO productoDTO) {
         verificarNombre(productoDTO);
+        productoDTO.setNombre(StringUtils.capitalizeWords(productoDTO.getNombre()));
         verificarDescripcion(productoDTO.getDescripcion());
         verificarPrecio(productoDTO.getPrecio());
         verificarPeso(productoDTO.getPeso());
         verificarStock(productoDTO.getStockMedio(), productoDTO.getStockMinimo());
-        //verificarFoto(productoDTO.getFoto());
+        verificarImagen(productoDTO.getImagen());
         verificarCategoria(productoDTO.getCategoriaId());
         verificarSucursal(productoDTO.getSucursalId());
         verificarColor(productoDTO.getColorId());
@@ -167,7 +191,6 @@ public class ProductoService implements IProductoService {
                 throw new BadRequestException(MessagesException.FORMATO_INVALIDO+"Nombre");
             }
         }
-        productoDTO.capitalizarNombre();
     }
 
     @Override
@@ -193,7 +216,7 @@ public class ProductoService implements IProductoService {
 
     @Override
     public void verificarStock(Integer stockMedio, Integer stockMinimo) {
-        if (stockMinimo != null && stockMinimo < 0) {
+        if (stockMinimo != null && stockMinimo <= 0) {
             throw new BadRequestException(MessagesException.CAMPO_NUMERICO_MAYOR_0+"Stock Minimo");
         }
         if (stockMedio != null && stockMedio <= 0) {
@@ -270,6 +293,26 @@ public class ProductoService implements IProductoService {
             producto.setStockActual(producto.getStockActual() - cantidad);
         }
         productoRepository.save(producto);
+    }
+
+    @Override
+    public void verificarImagen(MultipartFile imagen) {
+        if (imagen == null) {
+            throw new BadRequestException(MessagesException.CAMPO_NO_ENVIADO+"Imagen");
+        }
+        if (imagen.isEmpty()) {
+            throw new BadRequestException(MessagesException.CAMPO_NO_ENVIADO+"Imagen");
+        }
+        if (imagen.getSize() > MAX_FILE_SIZE) {
+            throw new BadRequestException("El archivo de imagen es demasiado grande.");
+        }
+        // Verificar la extensión del archivo
+        String fileName = imagen.getOriginalFilename();
+        String fileExtension = fileName != null ? fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase() : "";
+
+        if (!ALLOWED_EXTENSIONS.contains(fileExtension)) {
+            throw new BadRequestException("Formato de archivo no permitido. Solo se permiten imágenes PNG y JPG.");
+        }
     }
 
 }
