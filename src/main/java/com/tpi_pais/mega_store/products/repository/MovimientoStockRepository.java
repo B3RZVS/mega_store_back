@@ -21,4 +21,21 @@ public interface MovimientoStockRepository extends JpaRepository<MovimientoStock
      */
     public List<MovimientoStock> findByProductoIdOrderByFechaCreacionDesc(Integer idProducto);
 
+    /**
+     * Retrieves the list of stock movements for a specific branch, ordered by the creation date in descending order.
+     *
+     * @param idSucursal ID of the branch whose stock movements are to be retrieved.
+     * @return List of stock movements for the specified branch, ordered by the most recent.
+     */
+    public List<MovimientoStock> findBySucursalIdOrderByFechaCreacionDesc(Integer idSucursal);
+
+    /**
+     * Retrieves the list of stock movements for a specific product and branch, ordered by the creation date in descending order.
+     *
+     * @param idSucursal ID of the branch whose stock movements are to be retrieved.
+     * @param idProducto ID of the product whose stock movements are to be retrieved.
+     * @return List of stock movements for the specified product and branch, ordered by the most recent.
+     */
+    public List<MovimientoStock> findBySucursalIdAndProductoIdOrderByFechaCreacionDesc(Integer idSucursal, Integer idProducto);
+
 }

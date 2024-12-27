@@ -29,4 +29,5 @@ public interface ISucursalService {
     public SucursalDTO verificarAtributos (SucursalDTO sucursalDTO);
 
     public boolean sucursalExistente(String nombre);
+
 }

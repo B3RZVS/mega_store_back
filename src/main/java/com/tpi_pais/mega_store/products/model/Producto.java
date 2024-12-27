@@ -99,14 +99,6 @@ public class Producto {
     private Categoria categoria;
 
     /**
-     * Relación con la entidad Sucursal.
-     * El producto debe estar disponible en una sucursal específica.
-     */
-    @ManyToOne
-    @JoinColumn(name = "sucursal_id", nullable = false)
-    private Sucursal sucursal;
-
-    /**
      * Relación con la entidad Marca.
      * El producto debe estar asociado con una marca.
      */

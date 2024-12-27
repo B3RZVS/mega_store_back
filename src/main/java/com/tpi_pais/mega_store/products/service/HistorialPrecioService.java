@@ -15,6 +15,7 @@ import jakarta.persistence.Access;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 @Service
@@ -30,21 +31,8 @@ public class HistorialPrecioService implements IHistorialPrecioService{
     }
 
     @Override
-    public HistorialPrecio crear(HistorialPrecioDTO modelDto, String token){
-        this.verificarAtributos(modelDto);
-        Usuario usuario = this.obtenerUsuario(token);
-        Producto producto = this.obtenerProducto(modelDto.getProductoId());
-        HistorialPrecio model = new HistorialPrecio();
-        model.setPrecio(modelDto.getPrecio());
-        model.setUsuario(usuario);
-        model.setProducto(producto);
-        return this.repository.save(model);
-    };
-    @Override
-    public void crear(Double precio, Producto producto, String token){
+    public void crear(BigDecimal precio, Producto producto, String token){
         this.verificarPrecio(precio);
-        StringUtils stringUtils = new StringUtils();
-        token = stringUtils.limpiarToken(token);
         Usuario usuario = this.obtenerUsuario(token);
         HistorialPrecio model = new HistorialPrecio();
         model.setPrecio(precio);
@@ -59,8 +47,8 @@ public class HistorialPrecioService implements IHistorialPrecioService{
     };
 
     @Override
-    public void verificarPrecio(Double precio){
-        if (precio == null || precio.compareTo(0.01) < 0){
+    public void verificarPrecio(BigDecimal precio){
+        if (precio == null || precio.compareTo(BigDecimal.valueOf(0.01)) < 0){
             throw new BadRequestException(MessagesException.CAMPO_NUMERICO_MAYOR_0+"precio");
         }
     };

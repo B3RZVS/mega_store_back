@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
+import java.util.Map;
 
 /**
  * DTO (Data Transfer Object) para la entidad Producto.
@@ -27,28 +28,12 @@ public class ProductoDTO {
     private String descripcion; // Descripción del producto, incluyendo detalles adicionales.
 
     private Integer categoriaId; // Identificador de la categoría a la que pertenece el producto.
-    private Integer sucursalId; // Identificador de la sucursal donde se encuentra el producto.
+    private Integer[] sucursales;
+
     private Integer marcaId; // Identificador de la marca del producto.
     private Integer talleId; // Identificador del talle del producto (si aplica).
     private Integer colorId; // Identificador del color del producto (si aplica).
 
     private MultipartFile imagen;
 
-    /**
-     * Método para verificar si el nombre del producto está vacío o es nulo.
-     *
-     * @return true si el nombre es nulo o está vacío, false si tiene un valor.
-     */
-    public boolean noTieneNombre() {
-        return this.getNombre() == null || this.getNombre().isEmpty();
-    }
-
-    /**
-     * Método para capitalizar la primera letra de cada palabra en el nombre del producto.
-     * Utiliza la clase StringUtils para aplicar esta transformación.
-     */
-    public void capitalizarNombre() {
-        StringUtils stringUtils = new StringUtils();
-        this.setNombre(stringUtils.capitalizeWords(this.getNombre()));
-    }
 }

@@ -38,9 +38,6 @@ public class ProductoMapper {
         if (model.getCategoria() != null) {
             dto.setCategoriaId(model.getCategoria().getId());
         }
-        if (model.getSucursal() != null) {
-            dto.setSucursalId(model.getSucursal().getId());
-        }
         if (model.getMarca() != null) {
             dto.setMarcaId(model.getMarca().getId());
         }
@@ -79,11 +76,6 @@ public class ProductoMapper {
             Categoria categoria = new Categoria();
             categoria.setId(dto.getCategoriaId()); // Establece el ID de la categoría.
             model.setCategoria(categoria); // Asigna la categoría al producto.
-        }
-        if (dto.getSucursalId() != null) {
-            Sucursal sucursal = new Sucursal();
-            sucursal.setId(dto.getSucursalId()); // Establece el ID de la sucursal.
-            model.setSucursal(sucursal); // Asigna la sucursal al producto.
         }
         if (dto.getMarcaId() != null) {
             Marca marca = new Marca();

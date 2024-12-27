@@ -4,6 +4,7 @@ import com.tpi_pais.mega_store.auth.model.Usuario;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -35,7 +36,7 @@ public class HistorialPrecio {
      * Precio registrado en este historial.
      */
     @Column(name = "precio")
-    private Double precio;
+    private BigDecimal precio;
 
     /**
      * Fecha en la que se creó este registro de historial.

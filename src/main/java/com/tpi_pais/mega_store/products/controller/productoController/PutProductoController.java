@@ -11,6 +11,8 @@ import com.tpi_pais.mega_store.utils.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 @RestController
 @RequestMapping("/products") // Define la ruta base para los endpoints de productos
 public class PutProductoController {
@@ -47,7 +49,10 @@ public class PutProductoController {
 
     // Endpoint PUT para actualizar un producto
     @PutMapping("/producto")
-    public ResponseEntity<ApiResponse<Object>>  actualizar(@RequestBody ProductoDTO productoDTO, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<ApiResponse<Object>>  actualizar(
+            @RequestBody ProductoDTO productoDTO,
+            @RequestHeader("Authorization") String token
+    ) {
         // Buscar el producto que se quiere modificar por su ID
         Producto productoModificar = productoService.buscarPorId(productoDTO.getId());
 
@@ -75,7 +80,7 @@ public class PutProductoController {
             productoService.verificarPrecio(productoDTO.getPrecio()); // Verifica el precio
             productoModificar.setPrecio(productoDTO.getPrecio());
             // Crear un historial de precios
-            this.historialPrecioService.crear(productoDTO.getPrecio().doubleValue(), productoModificar, token);
+            this.historialPrecioService.crear(BigDecimal.valueOf(productoDTO.getPrecio().doubleValue()), productoModificar, token);
         }
 
         // Actualizar peso si se proporciona
@@ -90,25 +95,12 @@ public class PutProductoController {
             productoModificar.setStockMinimo(productoDTO.getStockMinimo());
         }
 
-        // Actualizar stock actual si se proporciona
-        if (productoDTO.getStockActual() != null) {
-            productoModificar.setStockActual(productoDTO.getStockActual());
-        }
-
         // Actualizar categoría si se proporciona
         if (productoDTO.getCategoriaId() != null) {
             productoService.verificarCategoria(productoDTO.getCategoriaId()); // Verifica la categoría
             Categoria categoria = categoriaRepository.findById(productoDTO.getCategoriaId())
                     .orElseThrow(() -> new BadRequestException("La categoría especificada no existe."));
             productoModificar.setCategoria(categoria);
-        }
-
-        // Actualizar sucursal si se proporciona
-        if (productoDTO.getSucursalId() != null) {
-            productoService.verificarSucursal(productoDTO.getSucursalId()); // Verifica la sucursal
-            Sucursal sucursal = sucursalRepository.findById(productoDTO.getSucursalId())
-                    .orElseThrow(() -> new BadRequestException("La sucursal especificada no existe."));
-            productoModificar.setSucursal(sucursal);
         }
 
         // Actualizar talle si se proporciona

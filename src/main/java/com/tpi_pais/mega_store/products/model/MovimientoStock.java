@@ -50,6 +50,14 @@ public class MovimientoStock {
     private LocalDateTime fechaCreacion = LocalDateTime.now();
 
     /**
+     * Sucursal relacionada con el movimiento de stock.
+     * Representa una relación muchos-a-uno con la tabla de sucursales.
+     */
+    @ManyToOne
+    @JoinColumn(name = "sucursal_id", nullable = true)
+    private Sucursal sucursal;
+
+    /**
      * Método que verifica si el movimiento es un ingreso.
      *
      * @return `true` si el movimiento es un ingreso, `false` si es un egreso.
@@ -59,7 +67,7 @@ public class MovimientoStock {
     }
 
     /**
-     * Método de ciclo de vida de JPA que se ejecuta antes de persistir el objeto.
+     *Método de ciclo de vida de JPA que se ejecuta antes de persistir el objeto.
      * Asigna la fecha de creación al momento actual.
      */
     @PrePersist

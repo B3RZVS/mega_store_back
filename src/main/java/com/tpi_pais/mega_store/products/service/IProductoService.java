@@ -1,12 +1,12 @@
 package com.tpi_pais.mega_store.products.service;
 
-import com.tpi_pais.mega_store.products.model.Marca;
 import com.tpi_pais.mega_store.products.model.Producto;
 import com.tpi_pais.mega_store.products.dto.ProductoDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 public interface IProductoService {
     List<ProductoDTO> listar(); // Lista todos los productos que no están eliminados
@@ -17,9 +17,9 @@ public interface IProductoService {
 
     Producto buscarEliminadoPorId(Integer id); // Busca producto eliminado por ID
 
-    ProductoDTO crear (ProductoDTO productoDTO);
+    ProductoDTO crear (ProductoDTO productoDTO, String token);
 
-    ProductoDTO guardar(ProductoDTO productoDTO); // Guarda producto nuevo o recupera un eliminado
+    ProductoDTO guardar(ProductoDTO productoDTO, String token); // Guarda producto nuevo o recupera un eliminado
 
     Producto guardar(Producto producto); // Guarda producto sin DTO
 
@@ -32,6 +32,7 @@ public interface IProductoService {
     boolean productoExistente(String nombre); // Verifica si un producto con el mismo nombre ya existe
 
     void actualizarStock(Producto producto, int cantidad, boolean esEntrada); // Actualiza stock del producto
+
     // Métodos de verificación de atributos individuales
     void verificarNombre(ProductoDTO productoDTO); // Verifica y formatea el nombre del producto
 
@@ -45,7 +46,7 @@ public interface IProductoService {
     
     void verificarCategoria(Integer categoriaId); // Verifica existencia de la categoría
 
-    void verificarSucursal(Integer sucursalId); // Verifica existencia de la sucursal
+    void verificarSucursal(Integer[] sucursales); // Verifica existencia de la sucursal
 
     void verificarColor(Integer colorId); // Verifica existencia del color
 

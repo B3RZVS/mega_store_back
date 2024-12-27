@@ -3,6 +3,7 @@ package com.tpi_pais.mega_store.products.dto;
 import com.tpi_pais.mega_store.products.model.Producto;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 public class HistorialPrecioDTO {
 
     private Integer id; // Identificador único del historial de precio.
-    private Double precio; // Precio del producto en un momento específico.
+    private BigDecimal precio; // Precio del producto en un momento específico.
     private LocalDateTime fecha; // Fecha en la que el precio fue registrado.
     private Integer usuarioId; // Identificador del usuario que realizó el cambio de precio.
     private Integer productoId; // Identificador del producto cuyo precio ha sido registrado.
@@ -33,7 +34,7 @@ public class HistorialPrecioDTO {
      * @param usuarioId Identificador del usuario que hizo el cambio.
      * @param productoId Identificador del producto cuyo precio ha sido registrado.
      */
-    public HistorialPrecioDTO(Integer id, Double precio, LocalDateTime fecha, Integer usuarioId, Integer productoId) {
+    public HistorialPrecioDTO(Integer id, BigDecimal precio, LocalDateTime fecha, Integer usuarioId, Integer productoId) {
         this.id = id;
         this.precio = precio;
         this.fecha = fecha;

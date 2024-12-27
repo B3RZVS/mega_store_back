@@ -13,7 +13,7 @@ public class TestMovStock {
 
     @BeforeEach
     public void setup(){
-        movimientoStockService = new MovimientoStockService(null, null, null);
+        movimientoStockService = new MovimientoStockService(null, null, null, null, null, null);
     }
 
     @Test

@@ -19,10 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+
+import static java.lang.Integer.parseInt;
 
 @Service
 public class ProductoService implements IProductoService {
@@ -35,6 +34,7 @@ public class ProductoService implements IProductoService {
     private final MarcaRepository marcaRepository;
     private final MovimientoStockService movimientoStockService;
     private final ImageBBService imgBBService;
+    private final HistorialPrecioService historialPrecioService;
 
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
     private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png");
@@ -48,7 +48,8 @@ public class ProductoService implements IProductoService {
             TalleRepository talleRepository,
             MarcaRepository marcaRepository,
             @Lazy MovimientoStockService movimientoStockService,
-            ImageBBService imgBBService) {
+            ImageBBService imgBBService,
+            @Lazy HistorialPrecioService historialPrecioService) {
         this.productoRepository = productoRepository;
         this.categoriaRepository = categoriaRepository;
         this.sucursalRepository = sucursalRepository;
@@ -57,11 +58,8 @@ public class ProductoService implements IProductoService {
         this.marcaRepository = marcaRepository;
         this.movimientoStockService = movimientoStockService;
         this.imgBBService = imgBBService;
+        this.historialPrecioService = historialPrecioService;
     }
-
-
-
-
 
     @Override
     public List<ProductoDTO> listar() {
@@ -87,12 +85,12 @@ public class ProductoService implements IProductoService {
     }
 
     @Override
-    public ProductoDTO crear(ProductoDTO modelDTO) {
+    public ProductoDTO crear(ProductoDTO modelDTO, String token) {
         modelDTO = this.verificarAtributos(modelDTO);
         modelDTO.setFoto(subirImagen(modelDTO.getImagen()));
         if (productoExistente(modelDTO.getNombre())) {
             Producto aux = buscarPorNombre(modelDTO.getNombre());
-            if (aux.esEliminado()) {
+            if (aux != null && aux.esEliminado()) {
                 throw new BadRequestException(MessagesException.OBJECTO_ELIMINADO);
                 //recuperar(aux); // Recuperar si el producto estaba eliminado
                 //return ProductoMapper.toDTO(aux);
@@ -100,7 +98,7 @@ public class ProductoService implements IProductoService {
                 throw new BadRequestException(MessagesException.OBJETO_DUPLICADO);
             }
         }else {
-            return guardar(modelDTO);
+            return guardar(modelDTO, token);
         }
     }
 
@@ -117,23 +115,28 @@ public class ProductoService implements IProductoService {
     }
 
     @Override
-    public ProductoDTO guardar(ProductoDTO modelDTO) {
+    public ProductoDTO guardar(ProductoDTO modelDTO, String token) {
+
         Producto model = new Producto();
+
         model.setNombre(modelDTO.getNombre());
         model.setDescripcion(modelDTO.getDescripcion());
         model.setPrecio(modelDTO.getPrecio());
         model.setPeso(modelDTO.getPeso());
-        model.setStockActual(modelDTO.getStockActual());
+        model.setStockActual(0);
         model.setStockMinimo(modelDTO.getStockMinimo());
         model.setStockMedio(modelDTO.getStockMedio());
         model.setFoto(modelDTO.getFoto());
         model.setCategoria(categoriaRepository.findById(modelDTO.getCategoriaId()).orElse(null));
-        model.setSucursal(sucursalRepository.findById(modelDTO.getSucursalId()).orElse(null));
         model.setMarca(marcaRepository.findById(modelDTO.getMarcaId()).orElse(null));
         model.setTalle(talleRepository.findById(modelDTO.getTalleId()).orElse(null));
         model.setColor(colorRepository.findById(modelDTO.getColorId()).orElse(null));
+
         ProductoDTO productoDTO = ProductoMapper.toDTO(productoRepository.save(model));
-        MovimientoStockDTO movimientoStockDTO = movimientoStockService.guardar(productoDTO.getId(), productoDTO.getStockActual(), false);
+        movimientoStockService.guardar(model, modelDTO.getSucursales());
+
+        historialPrecioService.crear(model.getPrecio(), model, token);
+
         return productoDTO;
     }
 
@@ -166,7 +169,7 @@ public class ProductoService implements IProductoService {
         verificarStock(productoDTO.getStockMedio(), productoDTO.getStockMinimo());
         verificarImagen(productoDTO.getImagen());
         verificarCategoria(productoDTO.getCategoriaId());
-        verificarSucursal(productoDTO.getSucursalId());
+        verificarSucursal(productoDTO.getSucursales());
         verificarColor(productoDTO.getColorId());
         verificarTalle(productoDTO.getTalleId());
         if (productoDTO.getStockActual() == null) {
@@ -232,9 +235,9 @@ public class ProductoService implements IProductoService {
         if (categoriaId == null) {
             throw new BadRequestException(MessagesException.CAMPO_NO_ENVIADO+"Categoria");
         }
-        if (!categoriaRepository.existsById(categoriaId)) { // Verifica si existe la categoria con ese ID
-            throw new BadRequestException(MessagesException.OBJECTO_INEXISTENTE+" Categoria");
-        }
+//        if (!categoriaRepository.existsById(categoriaId)) { // Verifica si existe la categoria con ese ID
+//            throw new BadRequestException(MessagesException.OBJECTO_INEXISTENTE+" Categoria");
+//        }
     }
 
     @Override
@@ -248,12 +251,19 @@ public class ProductoService implements IProductoService {
     }
 
     @Override
-    public void verificarSucursal(Integer sucursalId) {
-        if (sucursalId == null) {
+    public void verificarSucursal(Integer[] sucursales) {
+        /*
+         * Verifica que se haya enviado al menos una sucursal
+         * Verificar que cada sucursal exista
+         * Verificar que cada sucursar tenga stock mayor o igual a 0
+         */
+        if (sucursales == null || sucursales.length == 0) {
             throw new BadRequestException(MessagesException.CAMPO_NO_ENVIADO+"Sucursal");
         }
-        if (!sucursalRepository.existsById(sucursalId)) { // Verifica si existe la sucursal con ese ID
-            throw new BadRequestException(MessagesException.OBJECTO_INEXISTENTE+" Sucursal");
+        for (Integer sucursal : sucursales) {
+            if (sucursal > 0 && !sucursalRepository.existsById(sucursal)) {
+                throw new BadRequestException(MessagesException.OBJECTO_INEXISTENTE+" Sucursal con id: "+sucursal);
+            }
         }
     }
 
@@ -314,5 +324,4 @@ public class ProductoService implements IProductoService {
             throw new BadRequestException("Formato de archivo no permitido. Solo se permiten imágenes PNG y JPG.");
         }
     }
-
 }
