@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
  */
 @Data
 public class MovimientoStockDTO {
+
     private Integer id; // Identificador único del movimiento de stock.
     private Integer idProducto; // Identificador del producto asociado a este movimiento de stock.
     private Integer cantidad; // Cantidad de producto movida (puede ser positiva o negativa dependiendo del tipo de movimiento).

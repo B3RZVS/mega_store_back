@@ -3,7 +3,9 @@ package com.tpi_pais.mega_store.products.service;
 import com.tpi_pais.mega_store.exception.BadRequestException;
 import com.tpi_pais.mega_store.exception.MessagesException;
 import com.tpi_pais.mega_store.exception.NotFoundException;
+import com.tpi_pais.mega_store.products.dto.MovimientoDTO;
 import com.tpi_pais.mega_store.products.dto.MovimientoStockDTO;
+import com.tpi_pais.mega_store.products.dto.MovimientosDTO;
 import com.tpi_pais.mega_store.products.mapper.MovimientoStockMapper;
 import com.tpi_pais.mega_store.products.model.MovimientoStock;
 import com.tpi_pais.mega_store.products.model.Producto;
@@ -66,6 +68,42 @@ public class MovimientoStockService implements IMovimientoStockService {
 
         return movimientoStock;
     };
+
+    @Override
+    public ArrayList<MovimientoStockDTO> guardar(MovimientosDTO model){
+        /*
+        * Verificar que el producto exista
+        * Ir mov por mov verificando que la sucursal exista
+        * Si existe la sucursal
+        * Verificar que exista un stock por sucursal correspondiente
+        * Si no existe lo creo
+        * Genero el mov, y actualizo el stock de la sucursal y del producto.
+        * ----------------------------------------------------
+        * */
+        Producto producto = productoService.buscarPorId(model.getIdProducto());
+
+        ArrayList<MovimientoStockDTO> movimientosDTO = new ArrayList<>();
+        for (MovimientoDTO movimiento : model.getListaMovimientos()){
+            Sucursal sucursal = this.verificarSucursalYTraer(movimiento.getIdSucursal());
+            StockSucursal stock = this.obtenerStockPorSucursal(producto, sucursal);
+
+            MovimientoStock movimientoStock = new MovimientoStock();
+            movimientoStock.setProducto(producto);
+            movimientoStock.setCantidad(movimiento.getCantidad());
+            movimientoStock.setEsEgreso(false);
+            movimientoStock.setSucursal(sucursal);
+            MovimientoStock movimientoGuardado = repository.save(movimientoStock);
+
+            stock.setStock(stock.getStock() + movimiento.getCantidad());
+            stockSucursalRepository.save(stock);
+
+            movimientosDTO.add(movimientoStockMapper.toDTO(movimientoGuardado));
+
+            producto.setStockActual(producto.getStockActual() + movimiento.getCantidad());
+            productoRepository.save(producto);
+        }
+        return movimientosDTO;
+    }
 
     @Override
     public ArrayList<MovimientoStockDTO> ingreso (Producto producto, Integer cantidad, Sucursal sucursal){
@@ -148,6 +186,28 @@ public class MovimientoStockService implements IMovimientoStockService {
         Optional<Sucursal> sucursal = sucursalRepository.findByIdAndFechaEliminacionIsNull(sucursalId);
         if (sucursal.isEmpty()){
             throw new BadRequestException(MessagesException.OBJECTO_INEXISTENTE);
+        }
+    }
+
+    public Sucursal verificarSucursalYTraer (Integer sucursalId){
+        Optional<Sucursal> sucursal = sucursalRepository.findByIdAndFechaEliminacionIsNull(sucursalId);
+        if (sucursal.isEmpty()){
+            throw new BadRequestException(MessagesException.OBJECTO_INEXISTENTE);
+        }
+        return sucursal.get();
+    }
+
+    public StockSucursal obtenerStockPorSucursal (Producto producto, Sucursal sucursal){
+        Optional<StockSucursal> stock = stockSucursalRepository.findByProductoIdAndSucursalId (producto.getId(), sucursal.getId());
+        if (stock.isEmpty()){
+            StockSucursal stockSucursal = new StockSucursal();
+            stockSucursal.setStock(0);
+            stockSucursal.setSucursal(sucursal);
+            stockSucursal.setProducto(producto);
+            stockSucursalRepository.save(stockSucursal);
+            return stockSucursal;
+        }else{
+            return stock.get();
         }
     }
 
