@@ -1,8 +1,10 @@
 package com.tpi_pais.mega_store.auth.controller.UsuarioController;
 
+import com.tpi_pais.mega_store.auth.mapper.UsuarioMapper;
 import com.tpi_pais.mega_store.auth.model.Usuario;
 import com.tpi_pais.mega_store.auth.service.IUsuarioService;
 import com.tpi_pais.mega_store.exception.ResponseService;
+import com.tpi_pais.mega_store.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,14 +13,18 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 public class DeleteUsuarioController {
-    @Autowired
-    private IUsuarioService modelService;
 
-    @Autowired
-    private ResponseService responseService;
+    private final IUsuarioService modelService;
+
+    private final ResponseService responseService;
+
+    public DeleteUsuarioController(IUsuarioService modelService, ResponseService responseService) {
+        this.modelService = modelService;
+        this.responseService = responseService;
+    }
 
     @DeleteMapping("/usuario/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable Integer id) {
+    public ResponseEntity<ApiResponse<Object>>  eliminar(@PathVariable Integer id) {
         /*
          * Validaciones:
          * 1) Que el id se haya enviado.
@@ -36,6 +42,6 @@ public class DeleteUsuarioController {
          * */
         Usuario model = modelService.buscarEliminadoPorId(id);
         modelService.eliminar(model);
-        return responseService.successResponse(model, "Objeto eliminado");
+        return responseService.successResponse(UsuarioMapper.toDTO(model), "Objeto eliminado");
     }
 }

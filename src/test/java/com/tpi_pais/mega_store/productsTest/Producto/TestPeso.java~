@@ -1,0 +1,57 @@
+package com.tpi_pais.mega_store.productsTest.Producto;
+
+import com.tpi_pais.mega_store.exception.BadRequestException;
+import com.tpi_pais.mega_store.exception.MessagesException;
+import com.tpi_pais.mega_store.products.service.ProductoService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.MockitoAnnotations;
+
+import java.math.BigDecimal;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+public class TestPeso {
+    @InjectMocks
+    private ProductoService productoService;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+    @Test
+    void U_U1PE_015() {
+        // Scenario (I-U1PE-015)
+        BigDecimal peso = new BigDecimal("-1");
+
+        BadRequestException exception = assertThrows(BadRequestException.class, () -> {
+            productoService.verificarPeso(peso);
+        });
+
+        assert exception.getMessage().contains(MessagesException.CAMPO_NUMERICO_MAYOR_0+"Peso");
+    }
+
+    @Test
+    void U_U1PE_016() {
+        // Scenario (I-U1PE-016)
+        BigDecimal peso = BigDecimal.ZERO;
+
+        BadRequestException exception = assertThrows(BadRequestException.class, () -> {
+            productoService.verificarPeso(peso);
+        });
+
+        assert exception.getMessage().contains(MessagesException.CAMPO_NUMERICO_MAYOR_0+"Peso");
+    }
+
+    @Test
+    void U_U1PE_017() {
+        // Scenario (I-U1PE-017)
+        BigDecimal peso = new BigDecimal("0.01");
+
+        assertDoesNotThrow(() -> {
+            productoService.verificarPeso(peso);
+        });
+    }
+}

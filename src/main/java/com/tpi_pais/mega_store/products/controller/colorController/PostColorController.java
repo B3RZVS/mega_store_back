@@ -2,6 +2,7 @@ package com.tpi_pais.mega_store.products.controller.colorController;
 
 import com.tpi_pais.mega_store.exception.BadRequestException;
 import com.tpi_pais.mega_store.exception.ResponseService;
+import com.tpi_pais.mega_store.utils.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import com.tpi_pais.mega_store.products.dto.ColorDTO;
 import com.tpi_pais.mega_store.products.model.Color;
@@ -12,13 +13,18 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/products")
 public class PostColorController {
-    @Autowired
-    private IColorService modelService;
-    @Autowired
-    private ResponseService responseService;
+
+    private final IColorService modelService;
+
+    private final ResponseService responseService;
+
+    public PostColorController(IColorService modelService, ResponseService responseService) {
+        this.modelService = modelService;
+        this.responseService = responseService;
+    }
 
     @PostMapping("/color")
-    public ResponseEntity<?> guardar(@RequestBody ColorDTO model){
+    public ResponseEntity<ApiResponse<Object>>  guardar(@RequestBody ColorDTO model){
         model = modelService.verificarAtributos(model);
         if (modelService.colorExistente(model.getNombre())){
             Color aux = modelService.buscarPorNombre(model.getNombre());
@@ -29,8 +35,7 @@ public class PostColorController {
                 throw new BadRequestException("Ya existe un color con ese nombre");
             }
         } else {
-            ColorDTO modelGuardado = modelService.guardar(model);
-            return responseService.successResponse(modelGuardado, "Color guardado");
+            return responseService.successResponse(modelService.guardar(model), "Color guardado");
         }
     }
 

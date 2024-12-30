@@ -5,17 +5,16 @@ import com.tpi_pais.mega_store.products.dto.HistorialPrecioDTO;
 import com.tpi_pais.mega_store.products.model.HistorialPrecio;
 import com.tpi_pais.mega_store.products.model.Producto;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface IHistorialPrecioService {
 
-    public HistorialPrecio crear(HistorialPrecioDTO modelDto, String token);
-
-    public void crear(Double precio, Producto producto,String token);
+    public void crear(BigDecimal precio, Producto producto, String token);
 
     public void verificarAtributos(HistorialPrecioDTO modelDto);
 
-    public void verificarPrecio(Double precio);
+    public void verificarPrecio(BigDecimal precio);
 
     public Usuario obtenerUsuario(String token);
 

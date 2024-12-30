@@ -6,6 +6,7 @@ import com.tpi_pais.mega_store.products.dto.ColorDTO;
 import com.tpi_pais.mega_store.products.mapper.ColorMapper;
 import com.tpi_pais.mega_store.products.model.Color;
 import com.tpi_pais.mega_store.products.service.IColorService;
+import com.tpi_pais.mega_store.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,12 +15,17 @@ import java.util.List;
 @RestController
 @RequestMapping("/products")
 public class GetColorController {
-    @Autowired
-    private IColorService modelService;
-    @Autowired
-    private ResponseService responseService;
+
+    private final IColorService modelService;
+
+    private final ResponseService responseService;
+
+    public GetColorController(IColorService modelService, ResponseService responseService) {
+        this.modelService = modelService;
+        this.responseService = responseService;
+    }
     @GetMapping({"/colores"})
-    public ResponseEntity<?> getAll() {
+    public ResponseEntity<ApiResponse<Object>>  getAll() {
         List<ColorDTO> colors = modelService.listar();
         if (colors.isEmpty()) {
             throw new BadRequestException("No hay colores creados");
@@ -28,9 +34,8 @@ public class GetColorController {
     }
 
     @GetMapping("/color/{id}")
-    public ResponseEntity<?> getPorId(@PathVariable Integer id){
+    public ResponseEntity<ApiResponse<Object>>  getPorId(@PathVariable Integer id){
         Color model = modelService.buscarPorId(id);
-        ColorDTO modelDTO = ColorMapper.toDTO(model);
-        return responseService.successResponse(modelDTO, "OK");
+        return responseService.successResponse(ColorMapper.toDTO(model), "OK");
     }
 }

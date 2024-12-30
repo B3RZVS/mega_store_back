@@ -6,6 +6,7 @@ import com.tpi_pais.mega_store.auth.mapper.SesionMapper;
 import com.tpi_pais.mega_store.auth.model.Sesion;
 import com.tpi_pais.mega_store.auth.service.ISesionService;
 import com.tpi_pais.mega_store.exception.ResponseService;
+import com.tpi_pais.mega_store.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,15 +15,18 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 public class LogoutController {
+    private final ISesionService modelService;
 
-    @Autowired
-    private ISesionService modelService;
+    private final ResponseService responseService;
 
-    @Autowired
-    private ResponseService responseService;
+    public LogoutController(ISesionService modelService, ResponseService responseService) {
+        this.modelService = modelService;
+        this.responseService = responseService;
+    }
+
 
     @PostMapping("/logout")
-    public ResponseEntity<?> login(@RequestBody SesionDTO sesionDTO) {
+    public ResponseEntity<ApiResponse<Object>>  login(@RequestBody SesionDTO sesionDTO) {
         /*
          * El login debe recibir:
          * Un UsuarioDTO con lo siguiente:

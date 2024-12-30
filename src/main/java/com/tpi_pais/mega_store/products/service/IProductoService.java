@@ -1,11 +1,12 @@
 package com.tpi_pais.mega_store.products.service;
 
-import com.tpi_pais.mega_store.products.model.Marca;
 import com.tpi_pais.mega_store.products.model.Producto;
 import com.tpi_pais.mega_store.products.dto.ProductoDTO;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 public interface IProductoService {
     List<ProductoDTO> listar(); // Lista todos los productos que no están eliminados
@@ -16,7 +17,9 @@ public interface IProductoService {
 
     Producto buscarEliminadoPorId(Integer id); // Busca producto eliminado por ID
 
-    ProductoDTO guardar(ProductoDTO productoDTO); // Guarda producto nuevo o recupera un eliminado
+    ProductoDTO crear (ProductoDTO productoDTO, String token);
+
+    ProductoDTO guardar(ProductoDTO productoDTO, String token); // Guarda producto nuevo o recupera un eliminado
 
     Producto guardar(Producto producto); // Guarda producto sin DTO
 
@@ -29,6 +32,7 @@ public interface IProductoService {
     boolean productoExistente(String nombre); // Verifica si un producto con el mismo nombre ya existe
 
     void actualizarStock(Producto producto, int cantidad, boolean esEntrada); // Actualiza stock del producto
+
     // Métodos de verificación de atributos individuales
     void verificarNombre(ProductoDTO productoDTO); // Verifica y formatea el nombre del producto
 
@@ -39,17 +43,16 @@ public interface IProductoService {
     void verificarPeso(BigDecimal peso); // Verifica que el peso sea mayor que 0
 
     void verificarStock(Integer stockMedio, Integer stockMinimo); // Verifica valores de stock mínimo y medio
-
-
-    void verificarFoto(String nombreFoto); // Valida el formato de la foto
-
+    
     void verificarCategoria(Integer categoriaId); // Verifica existencia de la categoría
 
-    void verificarSucursal(Integer sucursalId); // Verifica existencia de la sucursal
+    void verificarSucursal(Integer[] sucursales); // Verifica existencia de la sucursal
 
     void verificarColor(Integer colorId); // Verifica existencia del color
 
     void verificarTalle(Integer talleId); // Verifica existencia del talle
 
     void verificarMarca(Integer marcaId);
+
+    void verificarImagen(MultipartFile imagen);
 }

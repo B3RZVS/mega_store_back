@@ -7,6 +7,7 @@ import com.tpi_pais.mega_store.auth.model.Sesion;
 import com.tpi_pais.mega_store.auth.model.Usuario;
 import com.tpi_pais.mega_store.auth.repository.UsuarioRepository;
 import com.tpi_pais.mega_store.exception.BadRequestException;
+import com.tpi_pais.mega_store.exception.MessagesException;
 import com.tpi_pais.mega_store.exception.NotFoundException;
 import com.tpi_pais.mega_store.utils.ExpresionesRegulares;
 import com.tpi_pais.mega_store.utils.StringUtils;
@@ -22,23 +23,26 @@ import java.util.Optional;
 @Service
 public class UsuarioService implements IUsuarioService{
 
-    @Autowired
-    private UsuarioRepository modelRepository;
+    private final UsuarioRepository modelRepository;
 
-    @Autowired
-    private ExpresionesRegulares expReg;
+    private final ExpresionesRegulares expReg;
 
-    @Autowired
-    private StringUtils StringUtils;
+    private final StringUtils StringUtils;
 
-    @Autowired
-    private RolService rolService;
+    private final RolService rolService;
 
-    @Autowired
-    private SesionService sesionService;
+    private final SesionService sesionService;
 
-    @Autowired
-    private WebClient webClient;
+    private final WebClient webClient;
+
+    public UsuarioService(UsuarioRepository modelRepository, ExpresionesRegulares expReg, StringUtils stringUtils, RolService rolService, SesionService sesionService, WebClient webClient) {
+        this.modelRepository = modelRepository;
+        this.expReg = expReg;
+        this.StringUtils = stringUtils;
+        this.rolService = rolService;
+        this.sesionService = sesionService;
+        this.webClient = webClient;
+    }
 
     @Override
     public List<UsuarioDTO> listar() {
@@ -57,7 +61,7 @@ public class UsuarioService implements IUsuarioService{
          * */
         Optional<Usuario> model = modelRepository.findByFechaEliminacionIsNullAndVerificadoTrueAndId(id);
         if (model.isEmpty()) {
-            throw new NotFoundException("El usuario con el id " + id + " no existe o no se encuentra activo.");
+            throw new NotFoundException(MessagesException.OBJECTO_NO_ENCONTRADO);
         }
         return model.get();
     }
@@ -70,10 +74,10 @@ public class UsuarioService implements IUsuarioService{
          * */
         Optional<Usuario> model = modelRepository.findById(id);
         if (model.isEmpty()) {
-            throw new NotFoundException("El usuario con el id " + id + " no existe.");
+            throw new NotFoundException(MessagesException.OBJECTO_INEXISTENTE);
         }
         if (!model.get().esEliminado()) {
-            throw new NotFoundException("El usuario con el id " + id + " no se encuentra eliminado.");
+            throw new NotFoundException(MessagesException.OBJECTO_NO_ELIMINADO);
         }
         return model.get();
     }
@@ -86,7 +90,7 @@ public class UsuarioService implements IUsuarioService{
          * */
         Optional<Usuario> model = modelRepository.findByFechaEliminacionIsNullAndVerificadoTrueAndEmail(email);
         if (model.isEmpty()) {
-            throw new NotFoundException("El usuario con email " + email + " no existe o no se encuentra activo.");
+            throw new NotFoundException(MessagesException.OBJECTO_NO_ENCONTRADO);
         }
         return model.get();
     }
@@ -98,10 +102,10 @@ public class UsuarioService implements IUsuarioService{
          * */
         Optional<Usuario> model = modelRepository.findByEmail(email);
         if (model.isEmpty()) {
-            throw new NotFoundException("El usuario con email " + email + " no existe.");
+            throw new NotFoundException(MessagesException.OBJECTO_INEXISTENTE);
         }
         if (!model.get().esEliminado()) {
-            throw new NotFoundException("El usuario con email " + email + " no se encuentra eliminado.");
+            throw new NotFoundException(MessagesException.OBJECTO_NO_ELIMINADO);
         }
         return model.get();
     }
@@ -128,7 +132,7 @@ public class UsuarioService implements IUsuarioService{
          * Elimina un usuario a partir de un modelo y si ya fue eliminado lanza una excepcion
          * */
         if (model.esEliminado()) {
-            throw new BadRequestException("El usuario con id " + model.getId() + " ya fue eliminado.");
+            throw new BadRequestException(MessagesException.OBJECTO_ELIMINADO);
         }
         model.eliminar();
         modelRepository.save(model);
@@ -139,7 +143,7 @@ public class UsuarioService implements IUsuarioService{
          * Recupera un usuario a partir de un modelo y si ya fue recuperado lanza una excepcion
          * */
         if (!model.esEliminado()) {
-            throw new BadRequestException("El usuario con id " + model.getId() + " no se encuentra eliminado.");
+            throw new BadRequestException(MessagesException.OBJECTO_NO_ELIMINADO);
         }
         model.recuperar();
         modelRepository.save(model);
@@ -156,7 +160,7 @@ public class UsuarioService implements IUsuarioService{
         if (model.checkPassword(password)) {
             return true;
         } else {
-            throw new BadRequestException("La contrase;a es incorrecta.");
+            throw new BadRequestException(MessagesException.CONTRASENA_INCORRECTA);
         }
 
     }
@@ -173,7 +177,7 @@ public class UsuarioService implements IUsuarioService{
             model.setPassword(password);
             modelRepository.save(model);
         } else {
-            throw new BadRequestException("La contrase;a enviada no coincide con la original.");
+            throw new BadRequestException(MessagesException.CONTRASENA_INCORRECTA);
         }
 
     }
@@ -201,10 +205,10 @@ public class UsuarioService implements IUsuarioService{
         }
 
         if (!this.expReg.verificarCaracteres(nombre)){
-            throw new BadRequestException("El nombre no puede contener caracteres especiales.");
+            throw new BadRequestException(MessagesException.CARACTERES_INVALIDOS+"Nombre");
         }
         if (Objects.equals(this.expReg.corregirCadena(nombre), "")){
-            throw new BadRequestException("El formato del nombre es inválido.");
+            throw new BadRequestException(MessagesException.FORMATO_INVALIDO+"Nombre");
         }
         this.StringUtils.verificarLargo(nombre, 1, 100, "nombre");
     }
@@ -213,10 +217,10 @@ public class UsuarioService implements IUsuarioService{
     public void verificarEmail(String email) {
         this.StringUtils.verificarExistencia(email, "email");
         if (!this.expReg.verificarEmail(email)){
-            throw new BadRequestException("El formato del email es inválido.");
+            throw new BadRequestException(MessagesException.FORMATO_INVALIDO+"Email");
         }
         if (this.emailUtilizado(email)){
-            throw new BadRequestException("El email ya se encuentra registrado.");
+            throw new BadRequestException(MessagesException.EMAIL_UTILIZADO);
         }
         this.StringUtils.verificarLargo(email, 1, 100, "email");
     }
@@ -231,7 +235,7 @@ public class UsuarioService implements IUsuarioService{
     public void verificarTelefono(String telefono, String metodo) {
         this.StringUtils.verificarExistencia(telefono, "telefono");
         if (!this.expReg.verificarNumeros(telefono)){
-            throw new BadRequestException("El formato del telefono es inválido, debe contener solo numeros.");
+            throw new BadRequestException(MessagesException.FORMATO_INVALIDO+"Telefono");
         }
         this.StringUtils.verificarLargo(telefono, 1, 15, "telefono");
     }
@@ -240,10 +244,10 @@ public class UsuarioService implements IUsuarioService{
     public void verificarDireccion(String direccion, String metodo) {
         this.StringUtils.verificarExistencia(direccion, "direccion");
         if (!this.expReg.verificarCaracteres(direccion)){
-            throw new BadRequestException("La direccion no puede contener caracteres especiales.");
+            throw new BadRequestException(MessagesException.CARACTERES_INVALIDOS+"Direccion");
         }
         if (Objects.equals(this.expReg.corregirCadena(direccion), "")){
-            throw new BadRequestException("El formato de la direccion es inválido.");
+            throw new BadRequestException(MessagesException.FORMATO_INVALIDO+"Direccion");
         }
         this.StringUtils.verificarLargo(direccion, 1, 100, "direccion");
     }
@@ -251,10 +255,10 @@ public class UsuarioService implements IUsuarioService{
     @Override
     public void verificarRol(Integer rol) {
         if (rol == null){
-            throw new BadRequestException("Se debe enviar un rol");
+            throw new BadRequestException(MessagesException.CAMPO_NO_ENVIADO+"Rol");
         }
         if (!this.expReg.verificarNumeros(String.valueOf(rol))){
-            throw new BadRequestException("El formato del rol es inválido.");
+            throw new BadRequestException(MessagesException.FORMATO_INVALIDO+"Rol");
         }
         Rol r = rolService.buscarPorId(rol);
     }
@@ -262,7 +266,7 @@ public class UsuarioService implements IUsuarioService{
     @Override
     public void verificarPassword(String password) {
         if (Objects.equals(password, "")){
-            throw new BadRequestException("Se debe enviar una contrase;a");
+            throw new BadRequestException(MessagesException.CAMPO_NO_ENVIADO+"Password");
         }
         /*
         * Requisitos:
@@ -273,7 +277,7 @@ public class UsuarioService implements IUsuarioService{
         *
         * */
         if (!this.expReg.verificarPassword(password)){
-            throw new BadRequestException("La contraseña no cumple con el formato necesario.");
+            throw new BadRequestException(MessagesException.FORMATO_INVALIDO+"Password");
         }
         this.StringUtils.verificarLargo(password, 8, 100, "password");
     }
@@ -329,8 +333,6 @@ public class UsuarioService implements IUsuarioService{
         }
         """, email, escapedEmailContent);
 
-        System.out.println(requestBody);
-
         // Token de autorización (reemplaza "your-token" por el token real)
         String token = "48cd4db4cf2acbb1a532528b71fadb202efe8af8";
 
@@ -343,15 +345,10 @@ public class UsuarioService implements IUsuarioService{
                 .retrieve()
                 .toEntity(String.class)
                 .doOnTerminate(() -> {
-                    System.out.println("Correo enviado correctamente.");
                 })
                 .doOnError(error -> {
-                    System.out.println("Error al enviar el correo: " + error.getMessage());
                 })
                 .block());  // Espera la respuesta sin bloquear el hilo principal
-
-
-        System.out.println(response);
     }
 
 
@@ -359,14 +356,14 @@ public class UsuarioService implements IUsuarioService{
     public void verificarCodigoVerificacion(String email, String codigoVerificacion){
         Optional<Usuario> model = modelRepository.findByEmail(email);
         if (model.isEmpty()) {
-            throw new NotFoundException("El usuario con email " + email + " no existe.");
+            throw new NotFoundException(MessagesException.OBJECTO_INEXISTENTE);
         }
 
         if (model.get().getVerificado()) {
-            throw new BadRequestException("El usuario con email " + email + " ya se encuentra verificado.");
+            throw new BadRequestException(MessagesException.OBJETO_ACTIVO);
         }
         if (Duration.between(model.get().getFechaCreacion(), LocalDateTime.now()).toMinutes() > 15) {
-            throw new BadRequestException("El código de verificación ha expirado.");
+            throw new BadRequestException(MessagesException.CODIGO_ACTIVACION_EXPIRADO);
 
         }
         if (model.get().getCodigoVerificacion().equals(codigoVerificacion)) {
@@ -375,17 +372,17 @@ public class UsuarioService implements IUsuarioService{
             modelRepository.save(model.get());
         }
         else {
-            throw new BadRequestException("El codigo de verificacion es incorrecto.");
+            throw new BadRequestException(MessagesException.CODIGO_ACTIVACION_INCORRECTO);
         }
     }
 
     public Sesion login (UsuarioDTO usuarioDto) {
         Optional<Usuario> usuario = Optional.ofNullable(this.buscarPorEmail(usuarioDto.getEmail()));
         if (usuario.isEmpty()) {
-            throw new NotFoundException("El usuario con email " + usuarioDto.getEmail() + " no existe.");
+            throw new NotFoundException(MessagesException.OBJECTO_INEXISTENTE);
         }
         if (!this.checkPassword(usuario.get(), usuarioDto.getPassword())) {
-            throw new BadRequestException("La contrase;a es incorrecta.");
+            throw new BadRequestException(MessagesException.CONTRASENA_INCORRECTA);
         }
         return this.sesionService.obtenerSesionActual(usuario.get());
     }

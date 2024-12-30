@@ -2,47 +2,66 @@ package com.tpi_pais.mega_store.products.controller.productoController;
 
 import com.tpi_pais.mega_store.exception.BadRequestException;
 import com.tpi_pais.mega_store.exception.ResponseService;
-import com.tpi_pais.mega_store.products.dto.MarcaDTO;
 import com.tpi_pais.mega_store.products.dto.ProductoDTO;
 import com.tpi_pais.mega_store.products.model.*;
 import com.tpi_pais.mega_store.products.repository.*;
 import com.tpi_pais.mega_store.products.service.HistorialPrecioService;
 import com.tpi_pais.mega_store.products.service.IProductoService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.tpi_pais.mega_store.utils.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/products") // Define la ruta base para los endpoints de productos
 public class PutProductoController {
 
-    @Autowired
-    private IProductoService productoService;
+    // Inyección de dependencias a través del constructor
+    private final IProductoService productoService;
+    private final CategoriaRepository categoriaRepository;
+    private final SucursalRepository sucursalRepository;
+    private final ColorRepository colorRepository;
+    private final TalleRepository talleRepository;
+    private final MarcaRepository marcaRepository;
+    private final ResponseService responseService;
+    private final HistorialPrecioService historialPrecioService;
 
-    @Autowired
-    private CategoriaRepository categoriaRepository;
-    @Autowired
-    private SucursalRepository sucursalRepository;
-    @Autowired
-    private ColorRepository colorRepository;
-    @Autowired
-    private TalleRepository talleRepository;
-    @Autowired
-    private MarcaRepository marcaRepository;
+    // Constructor para la inyección de dependencias
+    public PutProductoController(
+            IProductoService productoService,
+            CategoriaRepository categoriaRepository,
+            SucursalRepository sucursalRepository,
+            ColorRepository colorRepository,
+            TalleRepository talleRepository,
+            MarcaRepository marcaRepository,
+            ResponseService responseService,
+            HistorialPrecioService historialPrecioService) {
+        this.productoService = productoService;
+        this.categoriaRepository = categoriaRepository;
+        this.sucursalRepository = sucursalRepository;
+        this.colorRepository = colorRepository;
+        this.talleRepository = talleRepository;
+        this.marcaRepository = marcaRepository;
+        this.responseService = responseService;
+        this.historialPrecioService = historialPrecioService;
+    }
 
-    @Autowired
-    private ResponseService responseService;
-
+    // Endpoint PUT para actualizar un producto
     @PutMapping("/producto")
-    public ResponseEntity<?> actualizar(@RequestBody ProductoDTO productoDTO, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<ApiResponse<Object>>  actualizar(
+            @RequestBody ProductoDTO productoDTO,
+            @RequestHeader("Authorization") String token
+    ) {
         // Buscar el producto que se quiere modificar por su ID
         Producto productoModificar = productoService.buscarPorId(productoDTO.getId());
 
-
         // Validar y actualizar solo los atributos que se incluyen en el request
+
+        // Actualizar nombre si se proporciona
         if (productoDTO.getNombre() != null) {
-            productoService.verificarNombre(productoDTO);
-            // Validar si el nombre del producto ya existe y es diferente del actual
+            productoService.verificarNombre(productoDTO); // Verifica el nombre
+            // Verificar si ya existe un producto con el mismo nombre, y si es diferente al actual
             if (productoService.productoExistente(productoDTO.getNombre())
                     && !productoModificar.getNombre().equals(productoDTO.getNombre())) {
                 throw new BadRequestException("Ya existe un producto con ese nombre");
@@ -50,84 +69,86 @@ public class PutProductoController {
             productoModificar.setNombre(productoDTO.getNombre());
         }
 
+        // Actualizar descripción si se proporciona
         if (productoDTO.getDescripcion() != null) {
-            productoService.verificarDescripcion(productoDTO.getDescripcion());
+            productoService.verificarDescripcion(productoDTO.getDescripcion()); // Verifica la descripción
             productoModificar.setDescripcion(productoDTO.getDescripcion());
         }
 
+        // Actualizar precio si se proporciona
         if (productoDTO.getPrecio() != null) {
-            productoService.verificarPrecio(productoDTO.getPrecio());
+            productoService.verificarPrecio(productoDTO.getPrecio()); // Verifica el precio
             productoModificar.setPrecio(productoDTO.getPrecio());
-            HistorialPrecioService historialPrecioService = new HistorialPrecioService();
-            historialPrecioService.crear(productoDTO.getPrecio().doubleValue(), productoModificar, token);
+            // Crear un historial de precios
+            this.historialPrecioService.crear(BigDecimal.valueOf(productoDTO.getPrecio().doubleValue()), productoModificar, token);
         }
 
+        // Actualizar peso si se proporciona
         if (productoDTO.getPeso() != null) {
-            productoService.verificarPeso(productoDTO.getPeso());
+            productoService.verificarPeso(productoDTO.getPeso()); // Verifica el peso
             productoModificar.setPeso(productoDTO.getPeso());
         }
 
+        // Actualizar stock mínimo si se proporciona
         if (productoDTO.getStockMinimo() != null) {
-            productoService.verificarStock(productoDTO.getStockMedio(), productoDTO.getStockMinimo());
+            productoService.verificarStock(productoDTO.getStockMedio(), productoDTO.getStockMinimo()); // Verifica stock
             productoModificar.setStockMinimo(productoDTO.getStockMinimo());
         }
 
-        if (productoDTO.getStockActual() != null) {
-            productoModificar.setStockActual(productoDTO.getStockActual());
-        }
-
+        // Actualizar categoría si se proporciona
         if (productoDTO.getCategoriaId() != null) {
-            productoService.verificarCategoria(productoDTO.getCategoriaId());
+            productoService.verificarCategoria(productoDTO.getCategoriaId()); // Verifica la categoría
             Categoria categoria = categoriaRepository.findById(productoDTO.getCategoriaId())
                     .orElseThrow(() -> new BadRequestException("La categoría especificada no existe."));
             productoModificar.setCategoria(categoria);
         }
 
-        if (productoDTO.getSucursalId() != null) {
-            productoService.verificarSucursal(productoDTO.getSucursalId());
-            Sucursal sucursal = sucursalRepository.findById(productoDTO.getSucursalId())
-                    .orElseThrow(() -> new BadRequestException("La sucursal especificada no existe."));
-            productoModificar.setSucursal(sucursal);
-        }
-
+        // Actualizar talle si se proporciona
         if (productoDTO.getTalleId() != null) {
-            productoService.verificarTalle(productoDTO.getTalleId());
+            productoService.verificarTalle(productoDTO.getTalleId()); // Verifica el talle
             Talle talle = talleRepository.findById(productoDTO.getTalleId())
                     .orElseThrow(() -> new BadRequestException("El talle especificado no existe."));
             productoModificar.setTalle(talle);
         }
 
+        // Actualizar color si se proporciona
         if (productoDTO.getColorId() != null) {
-            productoService.verificarColor(productoDTO.getColorId());
+            productoService.verificarColor(productoDTO.getColorId()); // Verifica el color
             Color color = colorRepository.findById(productoDTO.getColorId())
                     .orElseThrow(() -> new BadRequestException("El color especificado no existe."));
             productoModificar.setColor(color);
         }
+
+        // Actualizar marca si se proporciona
         if (productoDTO.getMarcaId() != null) {
-            productoService.verificarMarca(productoDTO.getMarcaId());
+            productoService.verificarMarca(productoDTO.getMarcaId()); // Verifica la marca
             Marca marca = marcaRepository.findById(productoDTO.getMarcaId())
                     .orElseThrow(() -> new BadRequestException("La marca especificada no existe."));
             productoModificar.setMarca(marca);
         }
 
+        // Actualizar foto si se proporciona (descomentado en el código original)
         if (productoDTO.getFoto() != null) {
-            productoService.verificarFoto(productoDTO.getFoto());
+            //productoService.verificarFoto(productoDTO.getFoto()); // Descomentado, podría verificar la foto
             productoModificar.setFoto(productoDTO.getFoto());
         }
 
         // Guardar y retornar el producto actualizado
         Producto productoGuardado = productoService.guardar(productoModificar);
 
+        // Retornar la respuesta de éxito
         return responseService.successResponse(productoGuardado, "Producto actualizado");
     }
 
+    // Endpoint PUT para recuperar un producto eliminado
     @PutMapping("/producto/recuperar/{id}")
-    public ResponseEntity<?> recuperar(@PathVariable Integer id) {
+    public ResponseEntity<ApiResponse<Object>>  recuperar(@PathVariable Integer id) {
         // Buscar el producto eliminado por ID
         Producto producto = productoService.buscarEliminadoPorId(id);
 
         // Recuperar el producto si estaba eliminado
         productoService.recuperar(producto);
+        // Retornar la respuesta de éxito
         return responseService.successResponse(producto, "Producto recuperado");
     }
 }
