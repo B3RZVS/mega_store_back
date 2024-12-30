@@ -19,7 +19,7 @@ public interface IProductoService {
 
     ProductoDTO crear (ProductoDTO productoDTO, String token);
 
-    ProductoDTO guardar(ProductoDTO productoDTO, String token);
+    ProductoDTO guardar(ProductoDTO productoDTO, String token); // Guarda producto nuevo o recupera un eliminado
 
     Producto guardar(Producto producto); // Guarda producto sin DTO
 

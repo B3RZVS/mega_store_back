@@ -149,9 +149,7 @@ public class ProductoService implements IProductoService {
 
     @Override
     public Producto actualizar(Producto producto) {
-        Producto productoGuardado = productoRepository.save(producto);
-        return productoGuardado;
-
+        return productoRepository.save(producto);
     }
 
     @Override
@@ -335,7 +333,7 @@ public class ProductoService implements IProductoService {
     @Override
     public void actualizarPrecio(Producto producto, BigDecimal precio, String token) {
         this.verificarPrecio(precio);
-        if (producto.getPrecio() == precio) {
+        if (producto.getPrecio().compareTo(precio) == 0) {
             throw new BadRequestException("El precio no ha cambiado.");
         }
         historialPrecioService.crear(precio, producto, token);
