@@ -148,13 +148,6 @@ public class ProductoService implements IProductoService {
     }
 
     @Override
-    public Producto actualizar(Producto producto) {
-        Producto productoGuardado = productoRepository.save(producto);
-        return productoGuardado;
-
-    }
-
-    @Override
     public void eliminar(Producto producto, String usuario) {
         producto.eliminar(usuario);
         productoRepository.save(producto);
@@ -332,7 +325,6 @@ public class ProductoService implements IProductoService {
         }
     }
 
-    @Override
     public void actualizarPrecio(Producto producto, BigDecimal precio, String token) {
         this.verificarPrecio(precio);
         if (producto.getPrecio() == precio) {

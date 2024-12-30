@@ -36,6 +36,7 @@ public class UsuarioService implements IUsuarioService{
 
     private final WebClient webClient;
 
+    private final EmailCodigoValidacion emailCodigoValidacion;
 
     public UsuarioService(
             UsuarioRepository modelRepository,
@@ -43,13 +44,15 @@ public class UsuarioService implements IUsuarioService{
             StringUtils stringUtils,
             RolService rolService,
             SesionService sesionService,
-            WebClient webClient) {
+            WebClient webClient,
+            EmailCodigoValidacion emailCodigoValidacion) {
         this.modelRepository = modelRepository;
         this.expReg = expReg;
         this.StringUtils = stringUtils;
         this.rolService = rolService;
         this.sesionService = sesionService;
         this.webClient = webClient;
+        this.emailCodigoValidacion = emailCodigoValidacion;
     }
 
     @Override
@@ -322,10 +325,10 @@ public class UsuarioService implements IUsuarioService{
         // Datos que deseas enviar en el cuerpo de la solicitud
 
 
-        String emailHtmlTemplate = EmailCodigoValidacion.emailHtmlTemplate;
+        String emailHtmlTemplate = emailCodigoValidacion.emailHtmlTemplate;
         // Reemplaza las variables en la plantilla HTML
         String emailContent = emailHtmlTemplate
-                .replace("{LOGO_URL}", EmailCodigoValidacion.logoUrl)
+                .replace("{LOGO_URL}", emailCodigoValidacion.logoUrl)
                 .replace("{CODIGO_VERIFICACION}", codigoVerificacion);
 
         // Aquí escapamos las comillas dobles dentro del contenido HTML

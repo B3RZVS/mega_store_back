@@ -1,16 +1,17 @@
 package com.tpi_pais.mega_store.utils;
 
 import lombok.Data;
+import org.springframework.context.annotation.Bean;
 
 /**
  * Clase EmailCodigoValidacion
  * Representa la estructura de un correo electronico con un codigo de validacion.
  */
-@Data
+
 public class EmailCodigoValidacion {
 
-    public static String logoUrl = "https://i.ibb.co/NLytV57/logo.png";
-    public static String emailHtmlTemplate = """
+    public static final String logoUrl = "https://i.ibb.co/NLytV57/logo.png";
+    public static final String emailHtmlTemplate = """
             <!DOCTYPE html>
                        <html>
                        <head>

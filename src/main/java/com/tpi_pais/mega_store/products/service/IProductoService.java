@@ -23,6 +23,8 @@ public interface IProductoService {
 
     Producto guardar(Producto producto); // Guarda producto sin DTO
 
+    Producto actualizar(Producto producto);
+
     void eliminar(Producto producto, String usuario); // Elimina un producto y guarda el usuario que lo elimina
 
     void recuperar(Producto producto); // Recupera un producto eliminado
@@ -55,4 +57,6 @@ public interface IProductoService {
     void verificarMarca(Integer marcaId);
 
     void verificarImagen(MultipartFile imagen);
+
+    void actualizarPrecio(Producto producto, BigDecimal precio, String token);
 }
