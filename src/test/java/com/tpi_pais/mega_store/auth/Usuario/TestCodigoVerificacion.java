@@ -40,7 +40,7 @@ public class TestCodigoVerificacion {
         MockitoAnnotations.openMocks(this);
         this.usuarioRepository = mock(UsuarioRepository.class);
         this.rolRepository = mock(RolRepository.class);
-        this.usuarioService = new UsuarioService(usuarioRepository, expReg, null, new RolService(rolRepository), null, null);
+        this.usuarioService = new UsuarioService(usuarioRepository, expReg, null, new RolService(rolRepository), null, null, null);
     }
 
     @Test

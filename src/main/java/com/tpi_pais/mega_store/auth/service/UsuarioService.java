@@ -9,6 +9,7 @@ import com.tpi_pais.mega_store.auth.repository.UsuarioRepository;
 import com.tpi_pais.mega_store.exception.BadRequestException;
 import com.tpi_pais.mega_store.exception.MessagesException;
 import com.tpi_pais.mega_store.exception.NotFoundException;
+import com.tpi_pais.mega_store.utils.EmailCodigoValidacion;
 import com.tpi_pais.mega_store.utils.ExpresionesRegulares;
 import com.tpi_pais.mega_store.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +36,23 @@ public class UsuarioService implements IUsuarioService{
 
     private final WebClient webClient;
 
-    public UsuarioService(UsuarioRepository modelRepository, ExpresionesRegulares expReg, StringUtils stringUtils, RolService rolService, SesionService sesionService, WebClient webClient) {
+    private final EmailCodigoValidacion emailCodigoValidacion;
+
+    public UsuarioService(
+            UsuarioRepository modelRepository,
+            ExpresionesRegulares expReg,
+            StringUtils stringUtils,
+            RolService rolService,
+            SesionService sesionService,
+            WebClient webClient,
+            EmailCodigoValidacion emailCodigoValidacion) {
         this.modelRepository = modelRepository;
         this.expReg = expReg;
         this.StringUtils = stringUtils;
         this.rolService = rolService;
         this.sesionService = sesionService;
         this.webClient = webClient;
+        this.emailCodigoValidacion = emailCodigoValidacion;
     }
 
     @Override
@@ -312,13 +323,12 @@ public class UsuarioService implements IUsuarioService{
     public void enviarCodigoVerificacion(String email, String codigoVerificacion) {
         //Agregar un try por si ocurre un error: No se pudo enviar el mail
         // Datos que deseas enviar en el cuerpo de la solicitud
-        String logoUrl = "https://i.ibb.co/NLytV57/logo.png";
 
-        String emailHtmlTemplate = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><style>body {font-family: Arial, sans-serif;color: #ffffff;margin: 0;padding: 0;background-color: #c17eff;} .container {width: 100%;max-width: 600px;margin: 0 auto;padding: 20px;background-color: #c17eff;} .header {text-align: center;background-color: #b071e4;padding: 20px;} .content {background-color: #ffffff;padding: 30px;text-align: center;color: #6b2ba3;} .footer {text-align: center;font-size: 12px;color: #f0e6ff;padding-top: 20px;} .button {display: inline-block;background-color: #b071e4;color: white;padding: 10px 20px;text-decoration: none;border-radius: 5px;font-weight: bold;} .code {font-size: 24px;color: #b071e4;margin: 20px 0;} .logo {width: 100px;height: auto;margin-bottom: 20px;}</style></head><body><div class=\"container\"><div class=\"header\"><img src=\"{LOGO_URL}\" alt=\"Mega Store Logo\" class=\"logo\"/><h1>Bienvenido a Mega Store</h1></div><div class=\"content\"><h2>¡Hola, y bienvenido!</h2><p>Gracias por unirte a Mega Store. Para completar el proceso de registro, por favor verifica tu dirección de correo electrónico usando el código a continuación:</p><div class=\"code\">{CODIGO_VERIFICACION}</div><p>Introduce este código en la página de verificación para activar tu cuenta.</p><a href=\"https://www.megastore.com/verify\" class=\"button\">Verificar mi cuenta</a></div><div class=\"footer\"><p>Si no realizaste esta solicitud, puedes ignorar este correo.</p><p>&copy; 2024 Mega Store. Todos los derechos reservados.</p></div></div></body></html>";
 
+        String emailHtmlTemplate = emailCodigoValidacion.emailHtmlTemplate;
         // Reemplaza las variables en la plantilla HTML
         String emailContent = emailHtmlTemplate
-                .replace("{LOGO_URL}", logoUrl)
+                .replace("{LOGO_URL}", emailCodigoValidacion.logoUrl)
                 .replace("{CODIGO_VERIFICACION}", codigoVerificacion);
 
         // Aquí escapamos las comillas dobles dentro del contenido HTML
