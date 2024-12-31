@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 /**
  * Interface for CRUD operations on a repository of {@link StockSucursal}.
@@ -15,5 +16,7 @@ import java.util.ArrayList;
 public interface StockSucursalRepository extends JpaRepository<StockSucursal, Integer> {
 
     public ArrayList<StockSucursal> findByProductoIdOrderByStockDesc (Integer idProducto);
+
+    public Optional<StockSucursal> findByProductoIdAndSucursalId (Integer idProducto, Integer idSucursal);
 
 }

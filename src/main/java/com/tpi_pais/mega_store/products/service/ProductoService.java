@@ -148,6 +148,11 @@ public class ProductoService implements IProductoService {
     }
 
     @Override
+    public Producto actualizar(Producto producto) {
+        return productoRepository.save(producto);
+    }
+
+    @Override
     public void eliminar(Producto producto, String usuario) {
         producto.eliminar(usuario);
         productoRepository.save(producto);
@@ -324,4 +329,14 @@ public class ProductoService implements IProductoService {
             throw new BadRequestException("Formato de archivo no permitido. Solo se permiten imágenes PNG y JPG.");
         }
     }
+
+    @Override
+    public void actualizarPrecio(Producto producto, BigDecimal precio, String token) {
+        this.verificarPrecio(precio);
+        if (producto.getPrecio().compareTo(precio) == 0) {
+            throw new BadRequestException("El precio no ha cambiado.");
+        }
+        historialPrecioService.crear(precio, producto, token);
+    }
+
 }

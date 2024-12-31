@@ -8,6 +8,7 @@ import com.tpi_pais.mega_store.products.repository.*;
 import com.tpi_pais.mega_store.products.service.HistorialPrecioService;
 import com.tpi_pais.mega_store.products.service.IProductoService;
 import com.tpi_pais.mega_store.utils.ApiResponse;
+import com.tpi_pais.mega_store.utils.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +27,7 @@ public class PutProductoController {
     private final MarcaRepository marcaRepository;
     private final ResponseService responseService;
     private final HistorialPrecioService historialPrecioService;
+    private final StringUtils stringUtils;
 
     // Constructor para la inyección de dependencias
     public PutProductoController(
@@ -36,7 +38,8 @@ public class PutProductoController {
             TalleRepository talleRepository,
             MarcaRepository marcaRepository,
             ResponseService responseService,
-            HistorialPrecioService historialPrecioService) {
+            HistorialPrecioService historialPrecioService,
+            StringUtils stringUtils) {
         this.productoService = productoService;
         this.categoriaRepository = categoriaRepository;
         this.sucursalRepository = sucursalRepository;
@@ -45,6 +48,7 @@ public class PutProductoController {
         this.marcaRepository = marcaRepository;
         this.responseService = responseService;
         this.historialPrecioService = historialPrecioService;
+        this.stringUtils = stringUtils;
     }
 
     // Endpoint PUT para actualizar un producto
@@ -55,6 +59,7 @@ public class PutProductoController {
     ) {
         // Buscar el producto que se quiere modificar por su ID
         Producto productoModificar = productoService.buscarPorId(productoDTO.getId());
+        token = stringUtils.limpiarToken(token);
 
         // Validar y actualizar solo los atributos que se incluyen en el request
 
@@ -76,11 +81,9 @@ public class PutProductoController {
         }
 
         // Actualizar precio si se proporciona
-        if (productoDTO.getPrecio() != null) {
-            productoService.verificarPrecio(productoDTO.getPrecio()); // Verifica el precio
+        if (productoDTO.getPrecio() != null && productoDTO.getPrecio() != productoModificar.getPrecio()) {
+            productoService.actualizarPrecio(productoModificar, productoDTO.getPrecio(), token);
             productoModificar.setPrecio(productoDTO.getPrecio());
-            // Crear un historial de precios
-            this.historialPrecioService.crear(BigDecimal.valueOf(productoDTO.getPrecio().doubleValue()), productoModificar, token);
         }
 
         // Actualizar peso si se proporciona
@@ -134,7 +137,7 @@ public class PutProductoController {
         }
 
         // Guardar y retornar el producto actualizado
-        Producto productoGuardado = productoService.guardar(productoModificar);
+        Producto productoGuardado = productoService.actualizar(productoModificar);
 
         // Retornar la respuesta de éxito
         return responseService.successResponse(productoGuardado, "Producto actualizado");
